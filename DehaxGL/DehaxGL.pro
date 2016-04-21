@@ -11,10 +11,32 @@ TEMPLATE = lib
 
 DEFINES += DEHAXGL_LIBRARY
 
-SOURCES += DehaxGL.cpp
+SOURCES += DehaxGL.cpp \
+    Model/Vertex.cpp \
+    Math/Vec3i.cpp \
+    Math/Vec3f.cpp \
+    Math/Vec2i.cpp \
+    Math/Matrix.cpp \
+    Model/Face.cpp \
+    Model/Mesh.cpp \
+    Scene.cpp \
+    Model/Model.cpp \
+    Camera.cpp
 
 HEADERS += DehaxGL.h\
-        dehaxgl_global.h
+        dehaxgl_global.h \
+    IViewport.h \
+    Model/Vertex.h \
+    Utils/Utils.h \
+    Math/Vec3i.h \
+    Math/Vec3f.h \
+    Math/Vec2i.h \
+    Math/Matrix.h \
+    Model/Face.h \
+    Model/Mesh.h \
+    Scene.h \
+    Model/Model.h \
+    Camera.h
 
 unix {
     target.path = /usr/lib

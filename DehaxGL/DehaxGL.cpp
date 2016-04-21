@@ -1,6 +1,8 @@
 #include "DehaxGL.h"
 
 
-DehaxGL::DehaxGL()
+DehaxGL::DehaxGL(IViewport *viewport)
+    : m_viewport(viewport)
 {
+    
 }
