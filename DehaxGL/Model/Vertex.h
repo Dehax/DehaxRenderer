@@ -1,13 +1,20 @@
 #ifndef VERTEX_H
 #define VERTEX_H
 
-#include "Math/Vec3f.h"
+#include "dehaxgl_global.h"
+#include "../Math/Vec3f.h"
 
-struct Vertex
+struct DEHAXGLSHARED_EXPORT Vertex
 {
 public:
-    explicit Vertex(long double x, long double y, long double z);
-    explicit Vertex(Vec3f position);
+    explicit Vertex();
+    explicit Vertex(const long double &x, const long double &y, const long double &z);
+    explicit Vertex(const Vec3f &position);
+    
+    long double x() const;
+    long double y() const;
+    long double z() const;
+    Vec3f position() const;
     
 private:
     Vec3f m_position;

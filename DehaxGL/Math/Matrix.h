@@ -1,29 +1,30 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
+#include "dehaxgl_global.h"
 #include <vector>
-#include <cmath>
-#include "Math/Vec3f.h"
+#include "Vec3f.h"
 
-struct Matrix
+struct DEHAXGLSHARED_EXPORT Matrix
 {
 public:
     explicit Matrix(int rows = 4, int cols = 4, bool identity = false);
+//    Matrix &operator=(const Matrix &a);
     
-    static Matrix transform(long double x, long double y, long double z);
-    static Matrix transform(Vec3f offset);
-    static Matrix rotationX(long double angle);
-    static Matrix rotationY(long double angle);
-    static Matrix rotationZ(long double angle);
-    static Matrix rotation(long double angleX, long double angleY, long double angleZ);
-    static Matrix rotation(Vec3f rotation);
-    static Matrix rotation(Vec3f rotation, Vec3f pivot);
-    static Matrix scale(long double x, long double y, long double z);
-    static Matrix scale(Vec3f scale);
-    static Matrix scale(Vec3f scale, Vec3f pivot);
+    static Matrix transform(const long double &x, const long double &y, const long double &z);
+    static Matrix transform(const Vec3f &offset);
+    static Matrix rotationX(const long double &angle);
+    static Matrix rotationY(const long double &angle);
+    static Matrix rotationZ(const long double &angle);
+    static Matrix rotation(const long double &angleX, const long double &angleY, const long double &angleZ);
+    static Matrix rotation(Vec3f &rotation);
+    static Matrix rotation(Vec3f &rotation, Vec3f &pivot);
+    static Matrix scale(const long double &x, const long double &y, const long double &z);
+    static Matrix scale(Vec3f &scale);
+    static Matrix scale(Vec3f &scale, Vec3f &pivot);
     
-    std::vector<long double> &operator [](const int i);
-    Matrix operator *(const Matrix &a);
+    std::vector<long double> &operator[](const int i);
+    Matrix operator*(const Matrix &a);
     
     int rows() const;
     int cols() const;

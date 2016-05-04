@@ -20,3 +20,15 @@ HEADERS  += MainWindow.h \
     Widgets/Viewport.h
 
 FORMS    += MainWindow.ui
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../DehaxGL/release/ -lDehaxGL
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../DehaxGL/debug/ -lDehaxGL
+else:unix: LIBS += -L$$OUT_PWD/../DehaxGL/ -lDehaxGL
+
+INCLUDEPATH += $$PWD/../DehaxGL
+DEPENDPATH += $$PWD/../DehaxGL
+
+#QMAKE_CXXFLAGS_DEBUG *= -pg
+#QMAKE_LFLAGS_DEBUG *= -pg
+
+#CONFIG += debug

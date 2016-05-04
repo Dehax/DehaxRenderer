@@ -21,7 +21,9 @@ SOURCES += DehaxGL.cpp \
     Model/Mesh.cpp \
     Scene.cpp \
     Model/Model.cpp \
-    Camera.cpp
+    Camera.cpp \
+    Math/Vec4f.cpp \
+    Model/ModelsFactory.cpp
 
 HEADERS += DehaxGL.h\
         dehaxgl_global.h \
@@ -36,9 +38,16 @@ HEADERS += DehaxGL.h\
     Model/Mesh.h \
     Scene.h \
     Model/Model.h \
-    Camera.h
+    Camera.h \
+    Math/Vec4f.h \
+    Model/ModelsFactory.h
 
 unix {
     target.path = /usr/lib
     INSTALLS += target
 }
+
+#QMAKE_CXXFLAGS_DEBUG *= -pg
+#QMAKE_LFLAGS_DEBUG *= -pg
+
+#CONFIG += debug

@@ -1,21 +1,24 @@
 #ifndef MODEL_H
 #define MODEL_H
 
+#include "dehaxgl_global.h"
 #include <QString>
 #include <QStringList>
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
 #include "Mesh.h"
-#include "Math/Vec3f.h"
-#include "Math/Matrix.h"
-#include "Utils/Utils.h"
+//#include "../Math/Vec3f.h"
+#include "../Math/Matrix.h"
+#include "../Utils/Utils.h"
 
-class Model
+class DEHAXGLSHARED_EXPORT Model
 {
 public:
-    explicit Model(Mesh &mesh, ARGB color = RGBA(0, 0, 0, 255));
-    explicit Model(QString filePath);
+    Model(const Model &model);
+    explicit Model(const QString &name, Mesh *mesh, ARGB color = RGBA(0, 0, 0, 255));
+    explicit Model(const QString &name, const QString &filePath);
+    ~Model();
     
     Vec3f position() const;
     void setPosition(Vec3f position);
@@ -23,16 +26,20 @@ public:
     void setRotation(Vec3f rotation);
     Vec3f scale() const;
     void setScale(Vec3f scale);
-    
+    Vec3f pivot() const;
+    void setPivot(Vec3f pivot);
+    Mesh *mesh();
     
     Matrix worldMatrix();
     QString name() const;
     void setName(QString &name);
+    ARGB color() const;
+    void setColor(ARGB color);
     
 private:
-    void parseObjFile(QString filePath);
+    void parseObjFile(const QString &filePath);
     
-    Mesh m_mesh;
+    Mesh *m_mesh;
     ARGB m_color;
     
     // World

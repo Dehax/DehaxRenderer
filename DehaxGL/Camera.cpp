@@ -2,18 +2,124 @@
 
 Camera::Camera()
 {
-    m_position = Vec3f(0.0L, 0.0L, -10.0L);
-    m_lookAt = Vec3f(0.0L, 0.0L, 0.0L);
-    m_up = Vec3f(0.0L, 1.0L, 0.0L);
-    m_fov = M_PI_2;
+    m_position = DEFAULT_POSITION;
+    m_lookAt = DEFAULT_LOOK_AT;
+    m_up = DEFAULT_UP;
+    m_fov = DEFAULT_FOV;
+    m_projection = DEFAULT_PROJECTION;
+    m_zoom = DEFAULT_PARALLEL_ZOOM;
+    m_nearPlaneZ = DEFAULT_NEAR_Z;
+    m_farPlaneZ = DEFAULT_FAR_Z;
+    
+    m_theta = M_PI_2;
+    m_phi = 0.0L;
 }
 
-Camera::Camera(Vec3f position, Vec3f lookAt, Vec3f up, long double FOV)
+Camera::Camera(const Vec3f &position, const Vec3f &lookAt, const Vec3f &up, long double FOV)
 {
     m_position = position;
     m_lookAt = lookAt;
     m_up = up;
     m_fov = FOV;
+    m_projection = DEFAULT_PROJECTION;
+    m_zoom = DEFAULT_PARALLEL_ZOOM;
+    m_nearPlaneZ = DEFAULT_NEAR_Z;
+    m_farPlaneZ = DEFAULT_FAR_Z;
+    
+    m_theta = M_PI_2;
+    m_phi = 0.0L;
+}
+
+void Camera::rotate(const long double &angleX, const long double &angleY, const long double &angleZ)
+{
+//    // BUG: Заглушка для поворота.
+//    Matrix rotation = Matrix::rotation(angleX, angleY, angleZ);
+//    Vec4f newPosition = Vec4f(m_position) * rotation;
+//    Q_ASSERT(newPosition.w > 0.0L);
+//    long double w = std::abs(newPosition.w);
+//    m_position = Vec3f(newPosition.x / w, newPosition.y / w, newPosition.z / w);
+    //==========================================
+//    long double r = std::sqrt(m_position.x * m_position.x + m_position.y * m_position.y + m_position.z * m_position.z);
+//    long double theta;
+    
+//    if (m_position.y == 0.0L) {
+//        theta = M_PI_2;
+//    } else {
+//        theta = std::atan((m_position.z * m_position.z + m_position.x * m_position.x) / m_position.y);
+//        if (theta < 0.0L) {
+//            theta = M_PI - std::abs(theta);
+//        }
+//    }
+    
+//    long double phi;
+    
+//    if (m_position.z == 0.0L) {
+//        if (m_position.x > 0.0L) {
+//            phi = M_PI_2;
+//        } else {
+//            phi = -M_PI_2;
+//        }
+//    } else {
+//        phi = -std::atan(m_position.x / m_position.z);
+//    }
+    
+//    if (radianToDegree(theta) >= 5.0L && radianToDegree(theta) <= 175.0L) {
+//        theta += angleX;
+//    }
+    
+//    phi += angleY;
+    
+//    Vec3f newPosition = Vec3f(r * std::sin(theta) * std::sin(phi), r * std::cos(theta), -r * std::sin(theta) * std::cos(phi));
+    
+//    m_position = newPosition;
+    
+    long double r = (m_position - m_lookAt).length();
+    
+    if (radianToDegree(m_theta) >= 5.0L && radianToDegree(m_theta) <= 175.0L) {
+        m_theta += angleX;
+    } else {
+        if (radianToDegree(m_theta) < 5.0L) {
+            m_theta = degreeToRadian(5.0L);
+        } else {
+            m_theta = degreeToRadian(175.0L);
+        }
+    }
+    
+    m_phi += angleY;
+    
+    Vec3f newPosition = Vec3f(r * std::sin(m_theta) * std::sin(m_phi), r * std::cos(m_theta), -r * std::sin(m_theta) * std::cos(m_phi));
+    
+    m_position = newPosition;
+}
+
+void Camera::zoom(const long double &multiplier)
+{
+    if (std::abs(multiplier) < 0.000001L) {
+        return;
+    }
+    
+    long double zoom = std::pow(2.0L, multiplier);
+    
+    switch (m_projection) {
+    case Parallel:
+        m_zoom /= zoom;
+        break;
+    case Perspective:
+        long double newFOV = m_fov - multiplier * degreeToRadian(10.0L);
+        if (newFOV <= degreeToRadian(120.0L) && newFOV >= degreeToRadian(30.0L)) {
+            m_fov = newFOV;
+        }
+        break;
+    }
+}
+
+void Camera::changeProjection()
+{
+    if (m_projection == Perspective) {
+        m_projection = Parallel;
+    } else if (m_projection == Parallel) {
+        m_projection = Perspective;
+    }
 }
 
 int Camera::width() const
@@ -21,7 +127,7 @@ int Camera::width() const
     return m_width;
 }
 
-void Camera::setWidth(int width)
+void Camera::setWidth(const int &width)
 {
     m_width = width;
 }
@@ -31,17 +137,17 @@ int Camera::height() const
     return m_height;
 }
 
-void Camera::setHeight(int height)
+void Camera::setHeight(const int &height)
 {
     m_height = height;
 }
 
-int Camera::zoom() const
+int Camera::getZoom() const
 {
     return m_zoom;
 }
 
-void Camera::setZoom(int zoom)
+void Camera::setZoom(const int &zoom)
 {
     m_zoom = zoom;
 }
@@ -51,7 +157,7 @@ Camera::ProjectionType Camera::projection() const
     return m_projection;
 }
 
-void Camera::setProjection(Camera::ProjectionType projection)
+void Camera::setProjection(const Camera::ProjectionType &projection)
 {
     m_projection = projection;
 }
@@ -61,7 +167,7 @@ Vec3f Camera::position() const
     return m_position;
 }
 
-void Camera::setPosition(Vec3f position)
+void Camera::setPosition(const Vec3f &position)
 {
     m_position = position;
 }
@@ -71,7 +177,7 @@ Vec3f Camera::lookAt() const
     return m_lookAt;
 }
 
-void Camera::setLookAt(Vec3f lookAt)
+void Camera::setLookAt(const Vec3f &lookAt)
 {
     m_lookAt = lookAt;
 }
@@ -81,7 +187,7 @@ Vec3f Camera::up() const
     return m_up;
 }
 
-void Camera::setUp(Vec3f up)
+void Camera::setUp(const Vec3f &up)
 {
     m_up = up;
 }
@@ -91,9 +197,33 @@ long double Camera::FOV() const
     return m_fov;
 }
 
-void Camera::setFOV(long double FOV)
+void Camera::setFOV(const long double &FOV)
 {
     m_fov = FOV;
+}
+
+long double Camera::nearZ()
+{
+    return m_nearPlaneZ;
+}
+
+void Camera::setNearZ(const long double &nearZ)
+{
+    if (nearZ >= 1.0L && nearZ < m_farPlaneZ) {
+        m_nearPlaneZ = nearZ;
+    }
+}
+
+long double Camera::farZ()
+{
+    return m_farPlaneZ;
+}
+
+void Camera::setFarZ(const long double &farZ)
+{
+    if (farZ <= 1000.0L && farZ > m_nearPlaneZ) {
+        m_farPlaneZ = farZ;
+    }
 }
 
 Matrix Camera::viewMatrix() const
@@ -102,7 +232,7 @@ Matrix Camera::viewMatrix() const
     Vec3f xAxis = Vec3f::normal(Vec3f::cross(zAxis, m_up));
     Vec3f yAxis = Vec3f::cross(xAxis, zAxis);
     
-    Matrix viewMatrix = Matrix();
+    Matrix viewMatrix;
     
     viewMatrix[0][0] = xAxis.x;
     viewMatrix[1][0] = xAxis.y;
@@ -123,15 +253,19 @@ Matrix Camera::viewMatrix() const
 
 Matrix Camera::projectionMatrix() const
 {
-    Matrix projection = Matrix();
+    // BUG: Неправильная перспектива.
+    
+    Matrix projection;
     
     long double h;
     long double v;
-    long double zf = 100.0L;
-    long double zn = 1.0L;
+    long double zf = m_farPlaneZ;
+    long double zn = m_nearPlaneZ;
     long double aspectRatio = m_width / (long double)m_height;
-    long double yScale = 1.0L / tanl(m_fov / 2.0L);
+    long double yScale = 1.0L / std::tan(m_fov / 2.0L);
     long double xScale = yScale / aspectRatio;
+    
+    //long double d = 2.0L;
     
     switch (m_projection)
     {
@@ -141,6 +275,11 @@ Matrix Camera::projectionMatrix() const
         projection[2][2] = zf / (zf - zn);
         projection[3][2] = -zn * zf / (zf - zn);
         projection[2][3] = 1.0L;
+        
+//        projection[0][0] = 1.0L;
+//        projection[1][1] = 1.0L;
+//        projection[2][2] = 1.0L;
+//        projection[2][3] = 1.0L / d;
         break;
     case Parallel:
         if (m_width > m_height) {

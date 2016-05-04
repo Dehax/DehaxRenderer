@@ -1,5 +1,9 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-    DehaxRenderer \
-    DehaxGL
+    DehaxGL \
+    DehaxRenderer
+
+CONFIG += ordered
+
+DEFINES *= QT_USE_QSTRINGBUILDER

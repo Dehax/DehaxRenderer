@@ -11,7 +11,18 @@ Matrix::Matrix(int rows, int cols, bool identity)
     }
 }
 
-Matrix Matrix::transform(long double x, long double y, long double z)
+//Matrix &Matrix::operator=(const Matrix &a)
+//{
+//    if (this != &a) {
+//        m = a.m;
+//        m_rows = a.m_rows;
+//        m_cols = a.m_cols;
+//    }
+    
+//    return *this;
+//}
+
+Matrix Matrix::transform(const long double &x, const long double &y, const long double &z)
 {
     Matrix result = Matrix(4, 4, true);
     
@@ -22,17 +33,17 @@ Matrix Matrix::transform(long double x, long double y, long double z)
     return result;
 }
 
-Matrix Matrix::transform(Vec3f offset)
+Matrix Matrix::transform(const Vec3f &offset)
 {
     return transform(offset.x, offset.y, offset.z);
 }
 
-Matrix Matrix::rotationX(long double angle)
+Matrix Matrix::rotationX(const long double &angle)
 {
     Matrix result = Matrix(4, 4, true);
     
-    long double cosAngle = cosl(angle);
-    long double sinAngle = sinl(angle);
+    long double cosAngle = std::cos(angle);
+    long double sinAngle = std::sin(angle);
     
     result[1][1] = cosAngle;
     result[1][2] = sinAngle;
@@ -42,12 +53,12 @@ Matrix Matrix::rotationX(long double angle)
     return result;
 }
 
-Matrix Matrix::rotationY(long double angle)
+Matrix Matrix::rotationY(const long double &angle)
 {
     Matrix result = Matrix(4, 4, true);
     
-    long double cosAngle = cosl(angle);
-    long double sinAngle = sinl(angle);
+    long double cosAngle = std::cos(angle);
+    long double sinAngle = std::sin(angle);
     
     result[0][0] = cosAngle;
     result[0][2] = -sinAngle;
@@ -57,37 +68,37 @@ Matrix Matrix::rotationY(long double angle)
     return result;
 }
 
-Matrix Matrix::rotationZ(long double angle)
+Matrix Matrix::rotationZ(const long double &angle)
 {
     Matrix result = Matrix(4, 4, true);
     
-    long double cosAngle = cosl(angle);
-    long double sinAngle = sinl(angle);
+    long double cosAngle = std::cos(angle);
+    long double sinAngle = std::sin(angle);
     
     result[0][0] = cosAngle;
-    result[0][1] = sinAngle;
-    result[1][0] = -sinAngle;
+    result[1][0] = sinAngle;
+    result[0][1] = -sinAngle;
     result[1][1] = cosAngle;
     
     return result;
 }
 
-Matrix Matrix::rotation(long double angleX, long double angleY, long double angleZ)
+Matrix Matrix::rotation(const long double &angleX, const long double &angleY, const long double &angleZ)
 {
     return rotationX(angleX) * rotationY(angleY) * rotationZ(angleZ);
 }
 
-Matrix Matrix::rotation(Vec3f rotation)
+Matrix Matrix::rotation(Vec3f &rotation)
 {
     return Matrix::rotation(rotation.x, rotation.y, rotation.z);
 }
 
-Matrix Matrix::rotation(Vec3f rotation, Vec3f pivot)
+Matrix Matrix::rotation(Vec3f &rotation, Vec3f &pivot)
 {
     return transform(-pivot) * Matrix::rotation(rotation) * transform(pivot);
 }
 
-Matrix Matrix::scale(long double x, long double y, long double z)
+Matrix Matrix::scale(const long double &x, const long double &y, const long double &z)
 {
     Matrix result = Matrix(4, 4, true);
     
@@ -98,22 +109,22 @@ Matrix Matrix::scale(long double x, long double y, long double z)
     return result;
 }
 
-Matrix Matrix::scale(Vec3f scale)
+Matrix Matrix::scale(Vec3f &scale)
 {
     return Matrix::scale(scale.x, scale.y, scale.z);
 }
 
-Matrix Matrix::scale(Vec3f scale, Vec3f pivot)
+Matrix Matrix::scale(Vec3f &scale, Vec3f &pivot)
 {
     return transform(-pivot) * Matrix::scale(scale) * transform(pivot);
 }
 
-std::vector<long double> &Matrix::operator [](const int i)
+std::vector<long double> &Matrix::operator[](const int i)
 {
     return m[i];
 }
 
-Matrix Matrix::operator *(const Matrix &a)
+Matrix Matrix::operator*(const Matrix &a)
 {
     Matrix result(m_rows, a.m_cols);
     
