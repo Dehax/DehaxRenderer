@@ -44,7 +44,6 @@ Model ModelsFactory::cylinder(long double radius, long double height, int sides)
     Mesh *mesh = new Mesh();
     Model model = Model(QString("(G) cylinder"), mesh, RGBA(0, 255, 0, 255));
     
-    // BUG: Неверная генерация.
     int nbVerticesCap = sides + 1;
     
     int verticesLength = nbVerticesCap + nbVerticesCap;// + sides * 2 + 2;

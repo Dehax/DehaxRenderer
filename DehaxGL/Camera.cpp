@@ -32,48 +32,9 @@ Camera::Camera(const Vec3f &position, const Vec3f &lookAt, const Vec3f &up, long
 
 void Camera::rotate(const long double &angleX, const long double &angleY, const long double &angleZ)
 {
-//    // BUG: Заглушка для поворота.
-//    Matrix rotation = Matrix::rotation(angleX, angleY, angleZ);
-//    Vec4f newPosition = Vec4f(m_position) * rotation;
-//    Q_ASSERT(newPosition.w > 0.0L);
-//    long double w = std::abs(newPosition.w);
-//    m_position = Vec3f(newPosition.x / w, newPosition.y / w, newPosition.z / w);
-    //==========================================
-//    long double r = std::sqrt(m_position.x * m_position.x + m_position.y * m_position.y + m_position.z * m_position.z);
-//    long double theta;
+    Vec3f oldPosition = m_position - m_lookAt;
     
-//    if (m_position.y == 0.0L) {
-//        theta = M_PI_2;
-//    } else {
-//        theta = std::atan((m_position.z * m_position.z + m_position.x * m_position.x) / m_position.y);
-//        if (theta < 0.0L) {
-//            theta = M_PI - std::abs(theta);
-//        }
-//    }
-    
-//    long double phi;
-    
-//    if (m_position.z == 0.0L) {
-//        if (m_position.x > 0.0L) {
-//            phi = M_PI_2;
-//        } else {
-//            phi = -M_PI_2;
-//        }
-//    } else {
-//        phi = -std::atan(m_position.x / m_position.z);
-//    }
-    
-//    if (radianToDegree(theta) >= 5.0L && radianToDegree(theta) <= 175.0L) {
-//        theta += angleX;
-//    }
-    
-//    phi += angleY;
-    
-//    Vec3f newPosition = Vec3f(r * std::sin(theta) * std::sin(phi), r * std::cos(theta), -r * std::sin(theta) * std::cos(phi));
-    
-//    m_position = newPosition;
-    
-    long double r = (m_position - m_lookAt).length();
+    long double r = oldPosition.length();
     
     if (radianToDegree(m_theta) >= 5.0L && radianToDegree(m_theta) <= 175.0L) {
         m_theta += angleX;
@@ -89,7 +50,7 @@ void Camera::rotate(const long double &angleX, const long double &angleY, const 
     
     Vec3f newPosition = Vec3f(r * std::sin(m_theta) * std::sin(m_phi), r * std::cos(m_theta), -r * std::sin(m_theta) * std::cos(m_phi));
     
-    m_position = newPosition;
+    m_position = newPosition + m_lookAt;
 }
 
 void Camera::zoom(const long double &multiplier)
@@ -105,7 +66,7 @@ void Camera::zoom(const long double &multiplier)
         m_zoom /= zoom;
         break;
     case Perspective:
-        long double newFOV = m_fov - multiplier * degreeToRadian(10.0L);
+        long double newFOV = m_fov - multiplier * degreeToRadian(5.0L);
         if (newFOV <= degreeToRadian(120.0L) && newFOV >= degreeToRadian(30.0L)) {
             m_fov = newFOV;
         }
@@ -120,6 +81,12 @@ void Camera::changeProjection()
     } else if (m_projection == Parallel) {
         m_projection = Perspective;
     }
+}
+
+void Camera::move(Vec3f offset)
+{
+    m_position += offset;
+    m_lookAt += offset;
 }
 
 int Camera::width() const
@@ -253,8 +220,6 @@ Matrix Camera::viewMatrix() const
 
 Matrix Camera::projectionMatrix() const
 {
-    // BUG: Неправильная перспектива.
-    
     Matrix projection;
     
     long double h;
@@ -265,8 +230,6 @@ Matrix Camera::projectionMatrix() const
     long double yScale = 1.0L / std::tan(m_fov / 2.0L);
     long double xScale = yScale / aspectRatio;
     
-    //long double d = 2.0L;
-    
     switch (m_projection)
     {
     case Perspective:
@@ -275,11 +238,6 @@ Matrix Camera::projectionMatrix() const
         projection[2][2] = zf / (zf - zn);
         projection[3][2] = -zn * zf / (zf - zn);
         projection[2][3] = 1.0L;
-        
-//        projection[0][0] = 1.0L;
-//        projection[1][1] = 1.0L;
-//        projection[2][2] = 1.0L;
-//        projection[2][3] = 1.0L / d;
         break;
     case Parallel:
         if (m_width > m_height) {

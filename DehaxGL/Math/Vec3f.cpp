@@ -77,6 +77,11 @@ Vec3f Vec3f::operator*(const long double &a) const
     return Vec3f(x * a, y * a, z * a);
 }
 
+Vec3f Vec3f::operator/(const long double &a) const
+{
+    return Vec3f(x / a, y / a, z / a);
+}
+
 Vec3f::operator QString() const
 {
     return QString::number(x, 'f', 2) % ", " % QString::number(y, 'f', 2) % ", " % QString::number(z, 'f', 2);

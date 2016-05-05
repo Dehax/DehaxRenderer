@@ -12,7 +12,8 @@ public:
     explicit Vec4f(long double x, long double y, long double z, long double w);
     Vec4f(const Vec3f &v3);
     
-    Vec4f operator *(Matrix &a);
+    Vec4f operator*(Matrix &a);
+    Vec4f operator+(Vec4f &v);
     
     long double x;
     long double y;

@@ -16,7 +16,7 @@ Vec4f::Vec4f(const Vec3f &v3)
     w = 1.0L;
 }
 
-Vec4f Vec4f::operator *(Matrix &a)
+Vec4f Vec4f::operator*(Matrix &a)
 {
     long double rx = a[0][0] * x + a[1][0] * y + a[2][0] * z + a[3][0] * w;
     long double ry = a[0][1] * x + a[1][1] * y + a[2][1] * z + a[3][1] * w;
@@ -24,4 +24,12 @@ Vec4f Vec4f::operator *(Matrix &a)
     long double rw = a[0][3] * x + a[1][3] * y + a[2][3] * z + a[3][3] * w;
     
     return Vec4f(rx, ry, rz, rw);
+}
+
+Vec4f Vec4f::operator+(Vec4f &v)
+{
+    Vec3f v1 = Vec3f(*this);
+    Vec3f v2 = Vec3f(v);
+    
+    return Vec4f(v1 + v2);
 }

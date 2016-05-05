@@ -31,6 +31,7 @@ public:
     Vec3f operator+=(const Vec3f &v3);
     long double operator*(const Vec3f &v3) const;
     Vec3f operator*(const long double &a) const;
+    Vec3f operator/(const long double &a) const;
     
     operator QString() const;
     

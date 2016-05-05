@@ -73,25 +73,15 @@ Scene &DehaxGL::scene() const
 void DehaxGL::renderModel(Model &model, const RenderModes &renderMode)
 {
     Matrix worldMatrix = model.worldMatrix();
-    Matrix vertexMatrix = calculateVertexMatrix(worldMatrix);
+    Matrix viewMatrix = m_camera->viewMatrix();
+    Matrix projectionMatrix = m_camera->projectionMatrix();
+    //Matrix vertexMatrix = calculateVertexMatrix(worldMatrix);
     
     Mesh *mesh = model.mesh();
     int numFaces = mesh->numFaces();
-    //long double scale = mesh.maxLocalScale();
     
-    //int width = m_viewport->getWidth();
-    //int height = m_viewport->getHeight();
-    //long double cameraZ = m_camera->position().z;
-    //long double nearZ = m_camera->nearZ() + cameraZ;
-    //long double farZ = m_camera->farZ() + cameraZ;
-      
-    Vec3f inverseLookDirection = m_camera->position() - m_camera->lookAt();
-      
-    Vec3f nearPosition = inverseLookDirection - Vec3f::normal(inverseLookDirection) * m_camera->nearZ();
-    Vec3f farPosition = inverseLookDirection - Vec3f::normal(inverseLookDirection) * m_camera->farZ();
-      
-    //Vec4f nearV = Vec4f(nearPosition) * vertexMatrix;
-    //Vec4f farV = Vec4f(farPosition) * vertexMatrix;
+    long double nearZ = m_camera->nearZ();
+    long double farZ = m_camera->farZ() + (m_camera->width() / 2) * std::tan(m_camera->FOV() / 2);
     
     const ARGB modelColor = model.color();
     
@@ -112,10 +102,23 @@ void DehaxGL::renderModel(Model &model, const RenderModes &renderMode)
         Vec4f world2 = Vec4f(local2) * worldMatrix;
         Vec4f world3 = Vec4f(local3) * worldMatrix;
         
-        // Итоговые координаты (мировые + вида + проекции)
-        Vec4f result1 = Vec4f(local1) * vertexMatrix;
-        Vec4f result2 = Vec4f(local2) * vertexMatrix;
-        Vec4f result3 = Vec4f(local3) * vertexMatrix;
+        // Координаты вида
+        Vec4f view1 = world1 * viewMatrix;
+        Vec4f view2 = world2 * viewMatrix;
+        Vec4f view3 = world3 * viewMatrix;
+        
+        Vec3f view1v3 = Vec3f(view1);
+        Vec3f view2v3 = Vec3f(view2);
+        Vec3f view3v3 = Vec3f(view3);
+        
+        if (view1v3.z <= nearZ || view1v3.z >= farZ || view2v3.z <= nearZ || view2v3.z >= farZ || view3v3.z <= nearZ || view3v3.z >= farZ) {
+            return;
+        }
+        
+        // Координаты проекции (мировые + вида + проекции)
+        Vec4f result1 = view1 * projectionMatrix;
+        Vec4f result2 = view2 * projectionMatrix;
+        Vec4f result3 = view3 * projectionMatrix;
         
         if (result1.w <= 0.0L || result2.w <= 0.0L || result3.w <= 0.0L) {
             continue;
@@ -135,9 +138,14 @@ void DehaxGL::renderModel(Model &model, const RenderModes &renderMode)
         lightDirection = m_camera->lookAt() - m_camera->position();
         lightDirection = Vec3f::normal(lightDirection);
         long double intensity = -(n * lightDirection);
+        
         ARGB faceColor = RGBA((int)(RED(modelColor) * intensity), (int)(GREEN(modelColor) * intensity), (int)(BLUE(modelColor) * intensity), 255);
         
-        if (intensity > 0.0L/* && result1.z >= nearV.z && result1.z <= farV.z && result2.z >= nearV.z && result2.z <= farV.z && result3.z >= nearV.z && result3.z <= farV.z*/) {
+        lightDirection = (Vec3f(world1) + Vec3f(world2) + Vec3f(world3)) / 3.0L - m_camera->position();
+        lightDirection = Vec3f::normal(lightDirection);
+        intensity = -(n * lightDirection);
+        
+        if (intensity > 0.0L || renderMode.testFlag(Wireframe)) {
             drawFace(hc1, hc2, hc3, faceColor, m_zBuffer, renderMode);
         } else {
             continue;
@@ -194,7 +202,7 @@ void DehaxGL::drawTriangle(Vec3i &t0, Vec3i &t1, Vec3i &t2, const ARGB &color, i
             long double phi = B.x == A.x ? 1.0L : 0.0L;
             Vec3i P = Vec3f(A) + Vec3f(B - A) * phi;
             
-            int idx = P.x + P.y * width;
+            //int idx = P.x + P.y * width;
             
 //            if (idx >= 0 && idx < width * height && zBuffer[idx] < P.z) {
 //                zBuffer[idx] = P.z;
@@ -206,7 +214,7 @@ void DehaxGL::drawTriangle(Vec3i &t0, Vec3i &t1, Vec3i &t2, const ARGB &color, i
             phi = 1.0L;
             P = Vec3f(A) + Vec3f(B - A) * phi;
             
-            idx = P.x + P.y * width;
+            //int idx = P.x + P.y * width;
             
 //            if (idx >= 0 && idx < width * height && zBuffer[idx] < P.z) {
 //                zBuffer[idx] = P.z;

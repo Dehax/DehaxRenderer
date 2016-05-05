@@ -19,6 +19,7 @@ public:
     void rotate(const long double &angleX, const long double &angleY, const long double &angleZ);
     void zoom(const long double &multiplier);
     void changeProjection();
+    void move(Vec3f offset);
     
     int width() const;
     void setWidth(const int &width);
@@ -46,13 +47,13 @@ public:
     
 private:
     const ProjectionType DEFAULT_PROJECTION = Perspective;
-    const Vec3f DEFAULT_POSITION = Vec3f(0.0L, 0.0L, -10.0L);
+    const Vec3f DEFAULT_POSITION = Vec3f(0.0L, 0.0L, -100.0L);
     const Vec3f DEFAULT_LOOK_AT = Vec3f(0.0L, 0.0L, 0.0L);
     const Vec3f DEFAULT_UP = Vec3f(0.0L, 1.0L, 0.0L);
     const long double DEFAULT_FOV = M_PI_2;
-    const int DEFAULT_PARALLEL_ZOOM = 50;
+    const int DEFAULT_PARALLEL_ZOOM = 500;
     const long double DEFAULT_NEAR_Z = 1.0L;
-    const long double DEFAULT_FAR_Z = 50.0L;
+    const long double DEFAULT_FAR_Z = 500.0L;
     
     int m_width;
     int m_height;

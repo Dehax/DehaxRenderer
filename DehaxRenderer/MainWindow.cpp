@@ -96,6 +96,24 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     case Qt::Key_F:
         m_isFreeCameraMode = !m_isFreeCameraMode;
         break;
+    case Qt::Key_I:
+        m_dgl->camera().move(Vec3f(0.0L, 1.0L, 0.0L));
+        break;
+    case Qt::Key_K:
+        m_dgl->camera().move(Vec3f(0.0L, -1.0L, 0.0L));
+        break;
+    case Qt::Key_J:
+        m_dgl->camera().move(Vec3f(-1.0L, 0.0L, 0.0L));
+        break;
+    case Qt::Key_L:
+        m_dgl->camera().move(Vec3f(1.0L, 0.0L, 0.0L));
+        break;
+    case Qt::Key_U:
+        m_dgl->camera().move(Vec3f(0.0L, 0.0L, -1.0L));
+        break;
+    case Qt::Key_O:
+        m_dgl->camera().move(Vec3f(0.0L, 0.0L, 1.0L));
+        break;
     }
     
     updateViewport();
@@ -125,7 +143,7 @@ void MainWindow::wheelEvent(QWheelEvent *event)
 
 void MainWindow::updateViewport()
 {
-    // FIXME: Перенести обновление позиции камеры в UI.
+    // WARNING: Перенести обновление позиции камеры в UI.
     ui->cameraPositionValueLabel->setText(m_dgl->camera().position());
     
     m_dgl->render(m_renderModes);

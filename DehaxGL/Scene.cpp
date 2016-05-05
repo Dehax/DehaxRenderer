@@ -42,7 +42,7 @@ void Scene::scaleObject(const int &index, const Vec3f &scale)
 
 void Scene::generateCamera(long double width, long double length, long double height, long double radius, long double lensWidth, long double lensMountLength, long double lensMountWidth, long double marginWidth, long double sideButtonsHeight, long double shutterButtonHeight, long double sideButtonsRadius, long double shutterButtonRadius)
 {
-    long double multiplier = 10.0L;
+    long double multiplier = 1.0L;
     width /= multiplier;
     length /= multiplier;
     height /= multiplier;
