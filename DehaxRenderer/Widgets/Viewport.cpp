@@ -3,21 +3,19 @@
 Viewport::Viewport(QWidget *parent)
     : QWidget(parent)
 {
-    int w = width();
-    int h = height();
-    m_buffer = QImage(w, h, QImage::Format_ARGB32);
+    m_width = width();
+    m_height = height();
+    m_buffer = QImage(m_width, m_height, QImage::Format_ARGB32);
     clear();
 }
 
 void Viewport::setPixel(const int &x, const int &y, const ARGB &color)
 {
     //int offset = 0;
+    int h = m_height - y;
     
-    int w = m_buffer.width();
-    int h = m_buffer.height();
-    
-    if (x >= 0 && x < w && h - y >= 0 && h - y < h) {
-        m_buffer.setPixelColor(x, h - y, QColor(RED(color), GREEN(color), BLUE(color)));
+    if (x >= 0 && x < m_width && h >= 0 && h < m_height) {
+        m_buffer.setPixelColor(x, h, QColor(RED(color), GREEN(color), BLUE(color)));
     }
     
 //    for (int i = x - offset; i <= x + offset; i++) {
@@ -29,50 +27,14 @@ void Viewport::setPixel(const int &x, const int &y, const ARGB &color)
 //    }
 }
 
-//void Viewport::setLine(int x0, int y0, int x1, int y1, ARGB color)
-//{
-//    int w = m_buffer.width();
-//    int h = m_buffer.height();
-    
-//    y0 = h + 1 - y0;
-//    y1 = h + 1 - y1;
-    
-//    bool steep = false;
-    
-//    if (std::abs(x0-x1)<std::abs(y0-y1)) { // if the line is steep, we transpose the image
-//        std::swap(x0, y0);
-//        std::swap(x1, y1);
-//        steep = true;
-//    }
-//    if (x0>x1) { // make it left-to-right
-//        std::swap(x0, x1);
-//        std::swap(y0, y1);
-//    }
-    
-//    for (int x=x0; x<=x1; x++) {
-//        float t = (x-x0)/(float)(x1-x0);
-//        int y = y0*(1.-t) + y1*t;
-        
-//        if (steep) {
-//            if (y >= 0 && y < w && x >= 0 && x < h) {
-//                m_buffer.setPixelColor(y, x, QColor(0, 0, 0));
-//            }
-//        } else {
-//            if (x >= 0 && x < w && y >= 0 && y < h) {
-//                m_buffer.setPixelColor(x, y, QColor(0, 0, 0));
-//            }
-//        }
-//    }
-//}
-
 int Viewport::getWidth() const
 {
-    return width();
+    return m_width;
 }
 
 int Viewport::getHeight() const
 {
-    return height();
+    return m_height;
 }
 
 void Viewport::setSize(const int &width, const int &height)
@@ -80,6 +42,8 @@ void Viewport::setSize(const int &width, const int &height)
     resize(width, height);
     
     m_buffer = QImage(width, height, QImage::Format_ARGB32);
+    m_width = width;
+    m_height = height;
     clear();
 }
 

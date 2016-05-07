@@ -83,10 +83,40 @@ void Camera::changeProjection()
     }
 }
 
-void Camera::move(Vec3f offset)
+void Camera::move(const Vec3f &offset)
 {
     m_position += offset;
     m_lookAt += offset;
+}
+
+void Camera::strafeRight(const long double &value)
+{
+    Vec3f zAxis = Vec3f::normal(m_lookAt - m_position);
+    Vec3f xAxis = Vec3f::normal(Vec3f::cross(zAxis, m_up));
+    Vec3f delta = xAxis * value;
+    
+    m_position += delta;
+    m_lookAt += delta;
+}
+
+void Camera::strafeForward(const long double &value)
+{
+    Vec3f zAxis = Vec3f::normal(m_lookAt - m_position);
+    Vec3f delta = zAxis * value;
+    
+    m_position += delta;
+    m_lookAt += delta;
+}
+
+void Camera::strafeUp(const long double &value)
+{
+    Vec3f zAxis = Vec3f::normal(m_lookAt - m_position);
+    Vec3f xAxis = Vec3f::normal(Vec3f::cross(zAxis, m_up));
+    Vec3f yAxis = Vec3f::cross(xAxis, zAxis);
+    Vec3f delta = yAxis * value;
+    
+    m_position += delta;
+    m_lookAt += delta;
 }
 
 int Camera::width() const
@@ -238,6 +268,10 @@ Matrix Camera::projectionMatrix() const
         projection[2][2] = zf / (zf - zn);
         projection[3][2] = -zn * zf / (zf - zn);
         projection[2][3] = 1.0L;
+//        projection[0][0] = 1.0L;
+//        projection[1][1] = 1.0L;
+//        projection[2][2] = 1.0L;
+//        projection[2][3] = 1 / (m_width / 2 * std::tan(m_fov / 2.0L));
         break;
     case Parallel:
         if (m_width > m_height) {

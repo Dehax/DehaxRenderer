@@ -19,7 +19,10 @@ public:
     void rotate(const long double &angleX, const long double &angleY, const long double &angleZ);
     void zoom(const long double &multiplier);
     void changeProjection();
-    void move(Vec3f offset);
+    void move(const Vec3f &offset);
+    void strafeRight(const long double &value);
+    void strafeForward(const long double &value);
+    void strafeUp(const long double &value);
     
     int width() const;
     void setWidth(const int &width);

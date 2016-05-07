@@ -34,6 +34,8 @@ private:
     const QColor BACKGROUND_COLOR = QColor(127, 127, 127);
     
     QImage m_buffer;
+    int m_width;
+    int m_height;
 };
 
 #endif // VIEWPORT_H

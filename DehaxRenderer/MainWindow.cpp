@@ -97,22 +97,28 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         m_isFreeCameraMode = !m_isFreeCameraMode;
         break;
     case Qt::Key_I:
-        m_dgl->camera().move(Vec3f(0.0L, 1.0L, 0.0L));
+        //m_dgl->camera().move(Vec3f(0.0L, 1.0L, 0.0L));
+        m_dgl->camera().strafeUp(1.0L);
         break;
     case Qt::Key_K:
-        m_dgl->camera().move(Vec3f(0.0L, -1.0L, 0.0L));
+        //m_dgl->camera().move(Vec3f(0.0L, -1.0L, 0.0L));
+        m_dgl->camera().strafeUp(-1.0L);
         break;
     case Qt::Key_J:
-        m_dgl->camera().move(Vec3f(-1.0L, 0.0L, 0.0L));
+        //m_dgl->camera().move(Vec3f(-1.0L, 0.0L, 0.0L));
+        m_dgl->camera().strafeRight(-1.0L);
         break;
     case Qt::Key_L:
-        m_dgl->camera().move(Vec3f(1.0L, 0.0L, 0.0L));
+        //m_dgl->camera().move(Vec3f(1.0L, 0.0L, 0.0L));
+        m_dgl->camera().strafeRight(1.0L);
         break;
     case Qt::Key_U:
-        m_dgl->camera().move(Vec3f(0.0L, 0.0L, -1.0L));
+        //m_dgl->camera().move(Vec3f(0.0L, 0.0L, -1.0L));
+        m_dgl->camera().strafeForward(-1.0L);
         break;
     case Qt::Key_O:
-        m_dgl->camera().move(Vec3f(0.0L, 0.0L, 1.0L));
+        //m_dgl->camera().move(Vec3f(0.0L, 0.0L, 1.0L));
+        m_dgl->camera().strafeForward(1.0L);
         break;
     }
     
@@ -156,7 +162,7 @@ void MainWindow::updateObjectsList()
     Scene &scene = m_dgl->scene();
     int numObjects = scene.numObjects();
     for (int i = 0; i < numObjects; i++) {
-        Model model = scene[i];
+        Model &model = scene[i];
         QString objectName = model.name() + " (" + model.position() + ")";
         QListWidgetItem *objectItem = new QListWidgetItem(objectName);
         ui->objectsListWidget->addItem(objectItem);

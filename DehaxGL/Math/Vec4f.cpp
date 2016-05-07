@@ -1,5 +1,9 @@
 #include "Vec4f.h"
 
+Vec4f::Vec4f()
+{
+}
+
 Vec4f::Vec4f(long double x, long double y, long double z, long double w)
 {
     this->x = x;

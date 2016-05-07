@@ -9,6 +9,7 @@
 struct DEHAXGLSHARED_EXPORT Vec4f
 {
 public:
+    explicit Vec4f();
     explicit Vec4f(long double x, long double y, long double z, long double w);
     Vec4f(const Vec3f &v3);
     

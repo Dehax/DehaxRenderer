@@ -6,6 +6,7 @@
 struct DEHAXGLSHARED_EXPORT Face
 {
 public:
+    explicit Face();
     explicit Face(int v1, int v2, int v3);
     
     int v1;

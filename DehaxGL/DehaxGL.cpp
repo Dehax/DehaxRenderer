@@ -75,7 +75,6 @@ void DehaxGL::renderModel(Model &model, const RenderModes &renderMode)
     Matrix worldMatrix = model.worldMatrix();
     Matrix viewMatrix = m_camera->viewMatrix();
     Matrix projectionMatrix = m_camera->projectionMatrix();
-    //Matrix vertexMatrix = calculateVertexMatrix(worldMatrix);
     
     Mesh *mesh = model.mesh();
     int numFaces = mesh->numFaces();
@@ -85,71 +84,92 @@ void DehaxGL::renderModel(Model &model, const RenderModes &renderMode)
     
     const ARGB modelColor = model.color();
     
+    Face face;
+    Vertex v1;
+    Vertex v2;
+    Vertex v3;
+    Vec3f local1;
+    Vec3f local2;
+    Vec3f local3;
+    Vec4f world1;
+    Vec4f world2;
+    Vec4f world3;
+    Vec4f view1;
+    Vec4f view2;
+    Vec4f view3;
+    Vec3f view1v3;
+    Vec3f view2v3;
+    Vec3f view3v3;
+    Vec4f result1;
+    Vec4f result2;
+    Vec4f result3;
+    Vec3f hc1;
+    Vec3f hc2;
+    Vec3f hc3;
+    Vec3f n;
+    Vec3f lightDirection;
+    
     for (int j = 0; j < numFaces; j++) {
-        Face face = mesh->getFace(j);
+        face = mesh->getFace(j);
         
-        Vertex v1 = mesh->getVertex(face.v1);
-        Vertex v2 = mesh->getVertex(face.v2);
-        Vertex v3 = mesh->getVertex(face.v3);
+        v1 = mesh->getVertex(face.v1);
+        v2 = mesh->getVertex(face.v2);
+        v3 = mesh->getVertex(face.v3);
         
         // Локальные координаты
-        Vec3f local1 = v1.position();
-        Vec3f local2 = v2.position();
-        Vec3f local3 = v3.position();
+        local1 = v1.position();
+        local2 = v2.position();
+        local3 = v3.position();
         
         // Мировые координаты
-        Vec4f world1 = Vec4f(local1) * worldMatrix;
-        Vec4f world2 = Vec4f(local2) * worldMatrix;
-        Vec4f world3 = Vec4f(local3) * worldMatrix;
+        world1 = Vec4f(local1) * worldMatrix;
+        world2 = Vec4f(local2) * worldMatrix;
+        world3 = Vec4f(local3) * worldMatrix;
+        
+        // Нормаль грани
+        n = Vec3f::cross(Vec3f(world3) - Vec3f(world1), Vec3f(world2) - Vec3f(world1));
+        n = Vec3f::normal(n);
+        // Вектор взгляда
+        lightDirection = m_camera->lookAt() - m_camera->position();
+        lightDirection = Vec3f::normal(lightDirection);
+        long double intensity = -(n * lightDirection);
+        if (intensity < 0.0L) {
+            intensity = 0.0L;
+        }
+        ARGB faceColor = RGBA((int)(RED(modelColor) * intensity), (int)(GREEN(modelColor) * intensity), (int)(BLUE(modelColor) * intensity), 255);
+        
+        lightDirection = Vec3f(world1) - m_camera->position();
+        lightDirection = Vec3f::normal(lightDirection);
+        intensity = -(n * lightDirection);
+        // BUG: Нельзя делать проверку на Wireframe здесь, тогда отрисовываются backface.        
+        if (intensity <= 0.0L && !renderMode.testFlag(Wireframe)) {
+            continue;
+        }
         
         // Координаты вида
-        Vec4f view1 = world1 * viewMatrix;
-        Vec4f view2 = world2 * viewMatrix;
-        Vec4f view3 = world3 * viewMatrix;
+        view1 = world1 * viewMatrix;
+        view2 = world2 * viewMatrix;
+        view3 = world3 * viewMatrix;
         
-        Vec3f view1v3 = Vec3f(view1);
-        Vec3f view2v3 = Vec3f(view2);
-        Vec3f view3v3 = Vec3f(view3);
+        view1v3 = Vec3f(view1);
+        view2v3 = Vec3f(view2);
+        view3v3 = Vec3f(view3);
         
         if (view1v3.z <= nearZ || view1v3.z >= farZ || view2v3.z <= nearZ || view2v3.z >= farZ || view3v3.z <= nearZ || view3v3.z >= farZ) {
             return;
         }
         
-        // Координаты проекции (мировые + вида + проекции)
-        Vec4f result1 = view1 * projectionMatrix;
-        Vec4f result2 = view2 * projectionMatrix;
-        Vec4f result3 = view3 * projectionMatrix;
-        
-        if (result1.w <= 0.0L || result2.w <= 0.0L || result3.w <= 0.0L) {
-            continue;
-        }
+        // Координаты проекции
+        result1 = view1 * projectionMatrix;
+        result2 = view2 * projectionMatrix;
+        result3 = view3 * projectionMatrix;
         
         // Однородные итоговые координаты
-        Q_ASSERT(result1.w > 0.0L);
-        Q_ASSERT(result2.w > 0.0L);
-        Q_ASSERT(result3.w > 0.0L);
-        Vec3f hc1 = Vec3f(result1.x / std::abs(result1.w), result1.y / std::abs(result1.w), result1.z / std::abs(result1.w));
-        Vec3f hc2 = Vec3f(result2.x / std::abs(result2.w), result2.y / std::abs(result2.w), result2.z / std::abs(result2.w));
-        Vec3f hc3 = Vec3f(result3.x / std::abs(result3.w), result3.y / std::abs(result3.w), result3.z / std::abs(result3.w));
+        hc1 = Vec3f(result1);
+        hc2 = Vec3f(result2);
+        hc3 = Vec3f(result3);
         
-        Vec3f n = Vec3f::cross(Vec3f(world3) - Vec3f(world1), Vec3f(world2) - Vec3f(world1));
-        n = Vec3f::normal(n);
-        Vec3f lightDirection = Vec3f(0.0L, 0.0L, -1.0L);
-        lightDirection = m_camera->lookAt() - m_camera->position();
-        lightDirection = Vec3f::normal(lightDirection);
-        long double intensity = -(n * lightDirection);
-        
-        ARGB faceColor = RGBA((int)(RED(modelColor) * intensity), (int)(GREEN(modelColor) * intensity), (int)(BLUE(modelColor) * intensity), 255);
-        
-        lightDirection = (Vec3f(world1) + Vec3f(world2) + Vec3f(world3)) / 3.0L - m_camera->position();
-        lightDirection = Vec3f::normal(lightDirection);
-        intensity = -(n * lightDirection);
-        
-        if (intensity > 0.0L || renderMode.testFlag(Wireframe)) {
-            drawFace(hc1, hc2, hc3, faceColor, m_zBuffer, renderMode);
-        } else {
-            continue;
-        }
+        drawFace(hc1, hc2, hc3, faceColor, m_zBuffer, renderMode);
     }
 }
 
