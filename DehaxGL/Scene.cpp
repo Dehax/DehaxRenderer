@@ -4,13 +4,13 @@ Scene::Scene()
 {
     Model axisX = Model(QString("X axis"), QString("../../models/axisX.obj"));
     axisX.setColor(RGBA(255, 0, 0, 255));
-    //axisX.setScale(Vec3f(2.0L));
+    axisX.setScale(Vec3f(100.0L));
     Model axisY = Model(QString("Y axis"), QString("../../models/axisY.obj"));
     axisY.setColor(RGBA(0, 255, 0, 255));
-    //axisY.setScale(Vec3f(2.0L));
+    axisY.setScale(Vec3f(100.0L));
     Model axisZ = Model(QString("Z axis"), QString("../../models/axisZ.obj"));
     axisZ.setColor(RGBA(0, 0, 255, 255));
-    //axisZ.setScale(Vec3f(2.0L));
+    axisZ.setScale(Vec3f(100.0L));
     
     addModel(axisX);
     addModel(axisY);

@@ -138,7 +138,7 @@ void DehaxGL::renderModel(Model &model, const RenderModes &renderMode)
         }
         ARGB faceColor = RGBA((int)(RED(modelColor) * intensity), (int)(GREEN(modelColor) * intensity), (int)(BLUE(modelColor) * intensity), 255);
         
-        lightDirection = Vec3f(world1) - m_camera->position();
+        lightDirection = (m_camera->projection() == Camera::Parallel ? m_camera->lookAt() : Vec3f(world1)) - m_camera->position();
         lightDirection = Vec3f::normal(lightDirection);
         intensity = -(n * lightDirection);
         // BUG: Нельзя делать проверку на Wireframe здесь, тогда отрисовываются backface.        

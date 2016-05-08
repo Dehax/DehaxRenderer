@@ -71,20 +71,6 @@ Model ModelsFactory::cylinder(long double radius, long double height, int sides)
         vert++;
     }
     
-    // Sides
-//    int v = 0;
-    
-//    while (vert <= verticesLength - 4) {
-//        long double rad = (long double)v / sides * _2pi;
-//        vertices[vert] = Vertex(std::cos(rad) * radius, height, std::sin(rad) * radius);
-//        vertices[vert + 1] = Vertex(std::cos(rad) * radius, 0.0L, std::sin(rad) * radius);
-//        vert += 2;
-//        v++;
-//    }
-    
-//    vertices[vert] = vertices[sides * 2 + 2];
-//    vertices[vert + 1] = vertices[sides * 2 + 3];
-    
     // Triangles
     int nbTriangles = sides * 4;//sides * sides;// + sides * 2;
     int *triangles = new int[nbTriangles * 3/* + 3*/];
@@ -184,10 +170,10 @@ Model ModelsFactory::lensMount(long double width, long double frontLength, long 
     mesh->addVertex(Vertex(frontLength, -height, -width));  // 3
     
     // +Z
-    mesh->addVertex(Vertex(-backLength, -height, width));  // 4
-    mesh->addVertex(Vertex(-backLength, height, width));   // 5
-    mesh->addVertex(Vertex(backLength, height, width));    // 6
-    mesh->addVertex(Vertex(backLength, -height, width));   // 7
+    mesh->addVertex(Vertex(-backLength, -height, width));   // 4
+    mesh->addVertex(Vertex(-backLength, height, width));    // 5
+    mesh->addVertex(Vertex(backLength, height, width));     // 6
+    mesh->addVertex(Vertex(backLength, -height, width));    // 7
     
     mesh->addFace(Face(0, 1, 3));
     mesh->addFace(Face(3, 1, 2));
@@ -205,7 +191,167 @@ Model ModelsFactory::lensMount(long double width, long double frontLength, long 
     return model;
 }
 
-//Model ModelsFactory::camera(long double width, long double length, long double height, long double radius, long double lensWidth, long double lensMountLength, long double lensMountWidth, long double marginWidth, long double sideButtonsHeight, long double shutterButtonHeight, long double sideButtonsRadius, long double shutterButtonRadius)
-//{
+Model ModelsFactory::camera(long double width, long double length, long double height, long double radius, long double lensWidth, long double lensMountLength, long double lensMountWidth, long double marginWidth, long double sideButtonsHeight, long double shutterButtonHeight, long double sideButtonsRadius, long double shutterButtonRadius)
+{
+    Mesh *mesh = new Mesh();
+    Model result = Model("Camera", mesh, RGBA(255, 0, 255, 255));
     
-//}
+    Model base = ModelsFactory::box(width, length, height);
+    
+    Mesh *currentMesh = base.mesh();
+    int numVertices = currentMesh->numVertices();
+    int numFaces = currentMesh->numFaces();
+    int verticesOffset = 0;
+    
+    for (int i = 0; i < numVertices; i++) {
+        mesh->addVertex(currentMesh->getVertex(i));
+    }
+    
+    for (int i = 0; i < numFaces; i++) {
+        Face face = currentMesh->getFace(i);
+        face.v1 += verticesOffset;
+        face.v2 += verticesOffset;
+        face.v3 += verticesOffset;
+        mesh->addFace(face);
+    }
+    
+    verticesOffset += numVertices;
+    
+    Model lensMount = ModelsFactory::lensMount(lensMountWidth, lensMountLength, length - marginWidth * 2.0L, height);
+    //lensMount.setPosition(Vec3f(0.0L, 0.0L, -(width / 2.0L + lensMountWidth / 2.0L)));
+    
+    currentMesh = lensMount.mesh();
+    numVertices = currentMesh->numVertices();
+    numFaces = currentMesh->numFaces();
+    
+    for (int i = 0; i < numVertices; i++) {
+        Vertex vertex = currentMesh->getVertex(i);
+        mesh->addVertex(Vertex(vertex.x(), vertex.y(), vertex.z() - (width / 2.0L + lensMountWidth / 2.0L)));
+    }
+    
+    for (int i = 0; i < numFaces; i++) {
+        Face face = currentMesh->getFace(i);
+        face.v1 += verticesOffset;
+        face.v2 += verticesOffset;
+        face.v3 += verticesOffset;
+        mesh->addFace(face);
+    }
+    
+    verticesOffset += numVertices;
+    
+    Model lens = ModelsFactory::cylinder(radius, lensWidth, 12);
+    //lens.setPosition(Vec3f(0.0L, 0.0L, -(width / 2.0L + lensMountWidth + lensWidth / 2.0L)));
+    //lens.setRotation(Vec3f(degreeToRadian(90.0L), 0.0L, 0.0L));
+    
+    currentMesh = lens.mesh();
+    numVertices = currentMesh->numVertices();
+    numFaces = currentMesh->numFaces();
+    
+    for (int i = 0; i < numVertices; i++) {
+        Vertex vertex = currentMesh->getVertex(i);
+        Matrix rotationMatrix = Matrix::rotationX(degreeToRadian(90.0L));
+        Vec4f newPosition = Vec4f(vertex.position()) * rotationMatrix;
+        Vec3f newPositionV3 = Vec3f(newPosition);
+        mesh->addVertex(Vertex(newPositionV3.x, newPositionV3.y, newPositionV3.z - (width / 2.0L + lensMountWidth + lensWidth / 2.0L)));
+    }
+    
+    for (int i = 0; i < numFaces; i++) {
+        Face face = currentMesh->getFace(i);
+        face.v1 += verticesOffset;
+        face.v2 += verticesOffset;
+        face.v3 += verticesOffset;
+        mesh->addFace(face);
+    }
+    
+    verticesOffset += numVertices;
+    
+    Model rightSideButton = ModelsFactory::cylinder(sideButtonsRadius, sideButtonsHeight, 12);
+    //rightSideButton.setPosition(Vec3f(-length / 2.0L + marginWidth / 2.0L, height / 2.0L + sideButtonsHeight / 2.0L, 0.0L));
+    
+    currentMesh = rightSideButton.mesh();
+    numVertices = currentMesh->numVertices();
+    numFaces = currentMesh->numFaces();
+    
+    for (int i = 0; i < numVertices; i++) {
+        Vertex vertex = currentMesh->getVertex(i);
+        mesh->addVertex(Vertex(vertex.x() - length / 2.0L + marginWidth / 2.0L, vertex.y() + height / 2.0L + sideButtonsHeight / 2.0L, vertex.z()));
+    }
+    
+    for (int i = 0; i < numFaces; i++) {
+        Face face = currentMesh->getFace(i);
+        face.v1 += verticesOffset;
+        face.v2 += verticesOffset;
+        face.v3 += verticesOffset;
+        mesh->addFace(face);
+    }
+    
+    verticesOffset += numVertices;
+    
+    Model leftSideButton = ModelsFactory::cylinder(sideButtonsRadius, sideButtonsHeight, 12);
+    //leftSideButton.setPosition(Vec3f(length / 2.0L - marginWidth / 2.0L, height / 2.0L + sideButtonsHeight / 2.0L, 0.0L));
+    
+    currentMesh = leftSideButton.mesh();
+    numVertices = currentMesh->numVertices();
+    numFaces = currentMesh->numFaces();
+    
+    for (int i = 0; i < numVertices; i++) {
+        Vertex vertex = currentMesh->getVertex(i);
+        mesh->addVertex(Vertex(vertex.x() + length / 2.0L - marginWidth / 2.0L, vertex.y() + height / 2.0L + sideButtonsHeight / 2.0L, vertex.z()));
+    }
+    
+    for (int i = 0; i < numFaces; i++) {
+        Face face = currentMesh->getFace(i);
+        face.v1 += verticesOffset;
+        face.v2 += verticesOffset;
+        face.v3 += verticesOffset;
+        mesh->addFace(face);
+    }
+    
+    verticesOffset += numVertices;
+    
+    Model centerButton = ModelsFactory::cylinder(sideButtonsRadius, sideButtonsHeight / 2.0L, 12);
+    //centerButton.setPosition(Vec3f(0.0L, height / 2.0L + sideButtonsHeight / 4.0L, 0.0L));
+    
+    currentMesh = centerButton.mesh();
+    numVertices = currentMesh->numVertices();
+    numFaces = currentMesh->numFaces();
+    
+    for (int i = 0; i < numVertices; i++) {
+        Vertex vertex = currentMesh->getVertex(i);
+        mesh->addVertex(Vertex(vertex.x(), vertex.y() + height / 2.0L + sideButtonsHeight / 4.0L, vertex.z()));
+    }
+    
+    for (int i = 0; i < numFaces; i++) {
+        Face face = currentMesh->getFace(i);
+        face.v1 += verticesOffset;
+        face.v2 += verticesOffset;
+        face.v3 += verticesOffset;
+        mesh->addFace(face);
+    }
+    
+    verticesOffset += numVertices;
+    
+    Model shutterButton = ModelsFactory::cylinder(shutterButtonRadius, shutterButtonHeight, 12);
+    //shutterButton.setPosition(Vec3f(-length / 4.0L + marginWidth / 4.0L, height / 2.0L + shutterButtonHeight / 2.0L, width / 4.0L));    
+    
+    currentMesh = shutterButton.mesh();
+    numVertices = currentMesh->numVertices();
+    numFaces = currentMesh->numFaces();
+    
+    for (int i = 0; i < numVertices; i++) {
+        Vertex vertex = currentMesh->getVertex(i);
+        mesh->addVertex(Vertex(vertex.x() - length / 4.0L + marginWidth / 4.0L, vertex.y() + height / 2.0L + shutterButtonHeight / 2.0L, vertex.z() + width / 4.0L));
+    }
+    
+    for (int i = 0; i < numFaces; i++) {
+        Face face = currentMesh->getFace(i);
+        face.v1 += verticesOffset;
+        face.v2 += verticesOffset;
+        face.v3 += verticesOffset;
+        mesh->addFace(face);
+    }
+    
+    verticesOffset += numVertices;
+    
+    return result;
+}

@@ -16,13 +16,15 @@ MainWindow::MainWindow(QWidget *parent) :
     Model teapotModel = Model("teapot", "../../models/teapot.obj");
     Model boxModel = Model("box", "../../models/box.obj");
     Model planeModel = Model("plane", "../../models/plane.obj");
-    //Model suzanneModel = Model("suzanne", "../../models/suzanne.obj");
-    //Model generatedBox = ModelsFactory::box(1.0L, 1.0L, 1.5L);
-    //generatedBox.setScale(Vec3f(0.5L, 9.0L, 0.5L));
+    Model suzanneModel = Model("suzanne", "../../models/suzanne.obj");
+    suzanneModel.setScale(Vec3f(100.0L));
+    Model generatedBox = ModelsFactory::box(1.0L, 1.0L, 1.5L);
     Model generatedCylinder = ModelsFactory::cylinder(1.0L, 2.0L, 12);
-    //generatedCylinder.setScale(Vec3f(1.0L, 10.0L, 1.0L));
+    Model camera = ModelsFactory::camera();
     
-    m_dgl->scene().generateCamera();
+    m_dgl->scene().addModel(camera);
+    
+    //m_dgl->scene().generateCamera();
     
     //m_dgl->scene().addModel(teapotModel);
     //m_dgl->scene().addModel(boxModel);
