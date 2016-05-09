@@ -15,7 +15,7 @@ Vec3i Vec3i::operator-(const Vec3i &v3) const
     return Vec3i(x - v3.x, y - v3.y, z - v3.z);
 }
 
-long double Vec3i::length() const
-{
-    return std::sqrt((long double)(x * x + y * y + z * z));
-}
+//long double Vec3i::length() const
+//{
+//    return std::sqrt((long double)(x * x + y * y + z * z));
+//}

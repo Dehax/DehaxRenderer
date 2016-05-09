@@ -1,11 +1,17 @@
 #include "Matrix.h"
 
-Matrix::Matrix(int rows, int cols, bool identity)
+Matrix::Matrix(bool identity)/*
     : m(std::vector<std::vector<long double>>(rows, std::vector<long double>(cols, 0.0L))),
-      m_rows(rows), m_cols(cols)
+      m_rows(rows), m_cols(cols)*/
 {
-    if (rows == cols && identity) {
-        for (int i = 0; i < rows; i++) {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            m[i][j] = 0.0L;
+        }
+    }
+    
+    if (/*rows == cols && */identity) {
+        for (int i = 0; i < 4/*rows*/; i++) {
             m[i][i] = 1.0L;
         }
     }
@@ -24,11 +30,11 @@ Matrix::Matrix(int rows, int cols, bool identity)
 
 Matrix Matrix::transform(const long double &x, const long double &y, const long double &z)
 {
-    Matrix result = Matrix(4, 4, true);
+    Matrix result = Matrix(/*4, 4, */true);
     
-    result[3][0] = x;
-    result[3][1] = y;
-    result[3][2] = z;
+    result.m[3][0] = x;
+    result.m[3][1] = y;
+    result.m[3][2] = z;
     
     return result;
 }
@@ -40,45 +46,45 @@ Matrix Matrix::transform(const Vec3f &offset)
 
 Matrix Matrix::rotationX(const long double &angle)
 {
-    Matrix result = Matrix(4, 4, true);
+    Matrix result = Matrix(/*4, 4, */true);
     
     long double cosAngle = std::cos(angle);
     long double sinAngle = std::sin(angle);
     
-    result[1][1] = cosAngle;
-    result[1][2] = sinAngle;
-    result[2][1] = -sinAngle;
-    result[2][2] = cosAngle;
+    result.m[1][1] = cosAngle;
+    result.m[1][2] = sinAngle;
+    result.m[2][1] = -sinAngle;
+    result.m[2][2] = cosAngle;
     
     return result;
 }
 
 Matrix Matrix::rotationY(const long double &angle)
 {
-    Matrix result = Matrix(4, 4, true);
+    Matrix result = Matrix(/*4, 4, */true);
     
     long double cosAngle = std::cos(angle);
     long double sinAngle = std::sin(angle);
     
-    result[0][0] = cosAngle;
-    result[0][2] = -sinAngle;
-    result[2][0] = sinAngle;
-    result[2][2] = cosAngle;
+    result.m[0][0] = cosAngle;
+    result.m[0][2] = -sinAngle;
+    result.m[2][0] = sinAngle;
+    result.m[2][2] = cosAngle;
     
     return result;
 }
 
 Matrix Matrix::rotationZ(const long double &angle)
 {
-    Matrix result = Matrix(4, 4, true);
+    Matrix result = Matrix(/*4, 4, */true);
     
     long double cosAngle = std::cos(angle);
     long double sinAngle = std::sin(angle);
     
-    result[0][0] = cosAngle;
-    result[1][0] = sinAngle;
-    result[0][1] = -sinAngle;
-    result[1][1] = cosAngle;
+    result.m[0][0] = cosAngle;
+    result.m[1][0] = sinAngle;
+    result.m[0][1] = -sinAngle;
+    result.m[1][1] = cosAngle;
     
     return result;
 }
@@ -100,11 +106,11 @@ Matrix Matrix::rotation(Vec3f &rotation, Vec3f &pivot)
 
 Matrix Matrix::scale(const long double &x, const long double &y, const long double &z)
 {
-    Matrix result = Matrix(4, 4, true);
+    Matrix result = Matrix(/*4, 4, */true);
     
-    result[0][0] = x;
-    result[1][1] = y;
-    result[2][2] = z;
+    result.m[0][0] = x;
+    result.m[1][1] = y;
+    result.m[2][2] = z;
     
     return result;
 }
@@ -119,34 +125,47 @@ Matrix Matrix::scale(Vec3f &scale, Vec3f &pivot)
     return transform(-pivot) * Matrix::scale(scale) * transform(pivot);
 }
 
-std::vector<long double> &Matrix::operator[](const int i)
-{
-    return m[i];
-}
+//void Matrix::set(const int &i, const int &j, const long double &value)
+//{
+//    m[i][j] = value;
+//}
+
+//long double Matrix::get(const int &i, const int &j)
+//{
+//    return m[i][j];
+//}
+
+//std::vector<long double> &Matrix::operator[](const int i)
+//{
+//    return m[i];
+//}
 
 Matrix Matrix::operator*(const Matrix &a)
 {
-    Matrix result(m_rows, a.m_cols);
+    Matrix result;//(/*m_rows, a.m_cols*/);
+    long double sum;
     
-    for (int i = 0; i < m_rows; i++) {
-        for (int j = 0; j < a.m_cols; j++) {
-            result.m[i][j] = 0.0L;
+    for (int i = 0; i < 4/*m_rows*/; i++) {
+        for (int j = 0; j < 4/*a.m_cols*/; j++) {
+            sum = 0.0L;
             
-            for (int k = 0; k < m_cols; k++) {
-                result.m[i][j] += m[i][k] * a.m[k][j];
+            for (int k = 0; k < 4/*m_cols*/; k++) {
+                sum += m[i][k] * a.m[k][j];
             }
+            
+            result.m[i][j] = sum;
         }
     }
     
     return result;
 }
 
-int Matrix::rows() const
-{
-    return m_rows;
-}
+//int Matrix::rows() const
+//{
+//    return m_rows;
+//}
 
-int Matrix::cols() const
-{
-    return m_cols;
-}
+//int Matrix::cols() const
+//{
+//    return m_cols;
+//}

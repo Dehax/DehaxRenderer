@@ -13,13 +13,37 @@ class Viewport : public QWidget, public IViewport
 public:
     explicit Viewport(QWidget *parent = 0);
     
-    virtual void setPixel(const int &x, const int &y, const ARGB &color) final;
+    inline virtual void setPixel(const int &x, const int &y, const ARGB &color) final
+    {
+        int h = m_height - y;
+        
+        if (x >= 0 && x < m_width && h >= 0 && h < m_height) {
+            m_buffer.setPixelColor(x, h, QColor(color));
+        }
+    }
+    
     //virtual void setLine(int x0, int y0, int x1, int y1, ARGB color);
     virtual void setSize(const int &width, const int &height) final;
-    virtual void clear() final;
     
-    virtual int getWidth() const;
-    virtual int getHeight() const;
+    inline virtual void clear() final
+    {
+        m_buffer.fill(BACKGROUND_COLOR);
+    }
+    
+    inline virtual int getWidth() const
+    {
+        return m_width;
+    }
+    
+    inline virtual int getHeight() const
+    {
+        return m_height;
+    }
+    
+    inline void drawFps(int fps)
+    {
+        m_fps = fps;
+    }
     
 signals:
     void sizeChanged(QSize newSize);
@@ -36,6 +60,7 @@ private:
     QImage m_buffer;
     int m_width;
     int m_height;
+    int m_fps;
 };
 
 #endif // VIEWPORT_H

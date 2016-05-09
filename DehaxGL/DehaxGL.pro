@@ -11,8 +11,8 @@ TEMPLATE = lib
 
 DEFINES += DEHAXGL_LIBRARY
 
-QMAKE_CXXFLAGS_DEBUG *= -pg
-QMAKE_LFLAGS_DEBUG *= -pg
+#QMAKE_CXXFLAGS_DEBUG *= -pg
+#QMAKE_LFLAGS_DEBUG *= -pg
 
 SOURCES += DehaxGL.cpp \
     Model/Vertex.cpp \

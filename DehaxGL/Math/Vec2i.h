@@ -9,7 +9,10 @@ struct DEHAXGLSHARED_EXPORT Vec2i
 public:
     explicit Vec2i(int x, int y);
     
-    long double length() const;
+    inline long double length() const
+    {
+        return std::sqrt((long double)(x * x + y * y));
+    }
     
     int x;
     int y;

@@ -11,8 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = DehaxRenderer
 TEMPLATE = app
 
-QMAKE_CXXFLAGS_DEBUG *= -pg
-QMAKE_LFLAGS_DEBUG *= -pg
+#QMAKE_CXXFLAGS_DEBUG *= -pg
+#QMAKE_LFLAGS_DEBUG *= -pg
 
 SOURCES += main.cpp\
         MainWindow.cpp \

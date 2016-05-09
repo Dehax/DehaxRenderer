@@ -38,6 +38,8 @@ private:
     Scene *m_scene;
     Camera *m_camera;
     int *m_zBuffer;
+    int m_width;
+    int m_height;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(DehaxGL::RenderModes)

@@ -23,7 +23,10 @@ public:
     static Vec3f normal(const Vec3f &v3);
     static Vec3f cross(const Vec3f &a, const Vec3f &b);
     
-    long double length() const;
+    inline long double length() const
+    {
+        return std::sqrt(x * x + y * y + z * z);
+    }
     
     Vec3f operator-() const;
     Vec3f operator-(const Vec3f &v3) const;

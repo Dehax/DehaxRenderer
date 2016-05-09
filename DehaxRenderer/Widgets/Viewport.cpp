@@ -9,33 +9,39 @@ Viewport::Viewport(QWidget *parent)
     clear();
 }
 
-void Viewport::setPixel(const int &x, const int &y, const ARGB &color)
-{
-    //int offset = 0;
-    int h = m_height - y;
+//void Viewport::setPixel(const int &x, const int &y, const ARGB &color)
+//{
+//    //int offset = 0;
+//    int h = m_height - y;
     
-    if (x >= 0 && x < m_width && h >= 0 && h < m_height) {
-        m_buffer.setPixelColor(x, h, QColor(RED(color), GREEN(color), BLUE(color)));
-    }
-    
-//    for (int i = x - offset; i <= x + offset; i++) {
-//        for (int j = y - offset; j <= y + offset; j++) {
-//            if (i >= 0 && i < w && j >= 0 && j < h) {
-//                m_buffer.setPixelColor(i, h - j, QColor(RED(color), GREEN(color), BLUE(color)));
-//            }
-//        }
+//    if (x >= 0 && x < m_width && h >= 0 && h < m_height) {
+//        m_buffer.setPixelColor(x, h, QColor(color));
+//        //m_buffer.setPixelColor(x, h, QColor(RED(color), GREEN(color), BLUE(color)));
 //    }
-}
+    
+////    for (int i = x - offset; i <= x + offset; i++) {
+////        for (int j = y - offset; j <= y + offset; j++) {
+////            if (i >= 0 && i < w && j >= 0 && j < h) {
+////                m_buffer.setPixelColor(i, h - j, QColor(RED(color), GREEN(color), BLUE(color)));
+////            }
+////        }
+////    }
+//}
 
-int Viewport::getWidth() const
-{
-    return m_width;
-}
+//int Viewport::getWidth() const
+//{
+//    return m_width;
+//}
 
-int Viewport::getHeight() const
-{
-    return m_height;
-}
+//int Viewport::getHeight() const
+//{
+//    return m_height;
+//}
+
+//void Viewport::drawFps(int fps)
+//{
+//    m_fps = fps;
+//}
 
 void Viewport::setSize(const int &width, const int &height)
 {
@@ -47,15 +53,16 @@ void Viewport::setSize(const int &width, const int &height)
     clear();
 }
 
-void Viewport::clear()
-{
-    m_buffer.fill(BACKGROUND_COLOR);
-}
+//void Viewport::clear()
+//{
+//    m_buffer.fill(BACKGROUND_COLOR);
+//}
 
 void Viewport::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.drawImage(0, 0, m_buffer);
+    painter.drawText(QRect(0, 0, m_width, m_height), QString::number(m_fps));
 }
 
 void Viewport::resizeEvent(QResizeEvent *event)

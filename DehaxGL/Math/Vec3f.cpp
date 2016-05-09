@@ -40,10 +40,10 @@ Vec3f Vec3f::cross(const Vec3f &a, const Vec3f &b)
     return Vec3f(a.z * b.y - a.y * b.z, a.x * b.z - a.z * b.x, a.y * b.x - a.x * b.y);
 }
 
-long double Vec3f::length() const
-{
-    return std::sqrt(x * x + y * y + z * z);
-}
+//long double Vec3f::length() const
+//{
+//    return std::sqrt(x * x + y * y + z * z);
+//}
 
 Vec3f Vec3f::operator-() const
 {

@@ -12,25 +12,25 @@ Mesh::Mesh(const Mesh &mesh)
     m_maxLocalScale = mesh.m_maxLocalScale;
 }
 
-int Mesh::numVertices() const
-{
-    return m_vertices.size();
-}
+//int Mesh::numVertices() const
+//{
+//    return m_vertices.size();
+//}
 
-int Mesh::numFaces() const
-{
-    return m_faces.size();
-}
+//int Mesh::numFaces() const
+//{
+//    return m_faces.size();
+//}
 
-Vertex Mesh::getVertex(const int index) const
-{
-    return m_vertices[index];
-}
+//Vertex Mesh::getVertex(const int index) const
+//{
+//    return m_vertices[index];
+//}
 
-Face Mesh::getFace(const int index) const
-{
-    return m_faces[index];
-}
+//Face Mesh::getFace(const int index) const
+//{
+//    return m_faces[index];
+//}
 
 void Mesh::addVertex(const Vertex &vertex)
 {
@@ -68,7 +68,7 @@ void Mesh::clearFaces()
     m_faces.clear();
 }
 
-long double Mesh::maxLocalScale() const
-{
-    return m_maxLocalScale;
-}
+//long double Mesh::maxLocalScale() const
+//{
+//    return m_maxLocalScale;
+//}

@@ -27,11 +27,11 @@ Model::Model(const QString &name, Mesh *mesh, ARGB color)
     m_scale = Vec3f(1.0L, 1.0L, 1.0L);
     m_pivot = Vec3f(0.0L, 0.0L, 0.0L);
     
-    m_pivotMatrix = Matrix(4, 4, true);
-    m_pivotInverseMatrix = Matrix(4, 4, true);
-    m_transformMatrix = Matrix(4, 4, true);
-    m_rotateMatrix = Matrix(4, 4, true);
-    m_scaleMatrix = Matrix(4, 4, true);
+    m_pivotMatrix = Matrix(/*4, 4, */true);
+    m_pivotInverseMatrix = Matrix(/*4, 4, */true);
+    m_transformMatrix = Matrix(/*4, 4, */true);
+    m_rotateMatrix = Matrix(/*4, 4, */true);
+    m_scaleMatrix = Matrix(/*4, 4, */true);
 }
 
 Model::Model(const QString &name, const QString &filePath)
@@ -42,11 +42,11 @@ Model::Model(const QString &name, const QString &filePath)
     m_scale = Vec3f(1.0L, 1.0L, 1.0L);
     m_pivot = Vec3f(0.0L, 0.0L, 0.0L);
     
-    m_pivotMatrix = Matrix(4, 4, true);
-    m_pivotInverseMatrix = Matrix(4, 4, true);
-    m_transformMatrix = Matrix(4, 4, true);
-    m_rotateMatrix = Matrix(4, 4, true);
-    m_scaleMatrix = Matrix(4, 4, true);
+    m_pivotMatrix = Matrix(/*4, 4, */true);
+    m_pivotInverseMatrix = Matrix(/*4, 4, */true);
+    m_transformMatrix = Matrix(/*4, 4, */true);
+    m_rotateMatrix = Matrix(/*4, 4, */true);
+    m_scaleMatrix = Matrix(/*4, 4, */true);
     
     parseObjFile(filePath);
     
@@ -107,31 +107,31 @@ void Model::setPivot(Vec3f pivot)
     m_pivot = pivot;
 }
 
-Mesh *Model::mesh()
-{
-    return m_mesh;
-}
+//Mesh *Model::mesh()
+//{
+//    return m_mesh;
+//}
 
-Matrix Model::worldMatrix()
-{
-    Matrix P = m_pivotMatrix;
-    Matrix R = m_rotateMatrix;
-    Matrix S = m_scaleMatrix;
-    Matrix PI = m_pivotInverseMatrix;
-    Matrix T = m_transformMatrix;
+//Matrix Model::worldMatrix()
+//{
+//    Matrix P = m_pivotMatrix;
+//    Matrix R = m_rotateMatrix;
+//    Matrix S = m_scaleMatrix;
+//    Matrix PI = m_pivotInverseMatrix;
+//    Matrix T = m_transformMatrix;
     
-    return P * R * S * PI * T;
-}
+//    return P * R * S * PI * T;
+//}
 
 QString Model::name() const
 {
     return m_name;
 }
 
-ARGB Model::color() const
-{
-    return m_color;
-}
+//ARGB Model::color() const
+//{
+//    return m_color;
+//}
 
 void Model::setColor(ARGB color)
 {

@@ -28,12 +28,28 @@ public:
     void setScale(Vec3f scale);
     Vec3f pivot() const;
     void setPivot(Vec3f pivot);
-    Mesh *mesh();
+    inline Mesh *mesh()
+    {
+        return m_mesh;
+    }
     
-    Matrix worldMatrix();
+    inline Matrix worldMatrix()
+    {
+        Matrix P = m_pivotMatrix;
+        Matrix R = m_rotateMatrix;
+        Matrix S = m_scaleMatrix;
+        Matrix PI = m_pivotInverseMatrix;
+        Matrix T = m_transformMatrix;
+        
+        return P * R * S * PI * T;
+    }
+
     QString name() const;
     void setName(QString &name);
-    ARGB color() const;
+    inline ARGB color() const
+    {
+        return m_color;
+    }
     void setColor(ARGB color);
     
 private:

@@ -13,18 +13,35 @@ public:
     explicit Mesh();
     explicit Mesh(const Mesh &mesh);
     
-    int numVertices() const;
-    int numFaces() const;
+    inline int numVertices() const
+    {
+        return m_vertices.size();
+    }
     
-    Vertex getVertex(const int index) const;
-    Face getFace(const int index) const;
+    inline int numFaces() const
+    {
+        return m_faces.size();
+    }
+    
+    inline Vertex getVertex(const int index) const
+    {
+        return m_vertices[index];
+    }
+    
+    inline Face getFace(const int index) const
+    {
+        return m_faces[index];
+    }
     
     void addVertex(const Vertex &vertex);
     void addFace(const Face &face);
     void clearVertices();
     void clearFaces();
     
-    long double maxLocalScale() const;
+    inline long double maxLocalScale() const
+    {
+        return m_maxLocalScale;
+    }
     
 private:
     std::vector<Vertex> m_vertices;

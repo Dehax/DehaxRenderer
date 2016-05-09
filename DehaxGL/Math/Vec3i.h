@@ -15,7 +15,10 @@ public:
     
     Vec3i operator-(const Vec3i &v3) const;
     
-    long double length() const;
+    inline long double length() const
+    {
+        return std::sqrt((long double)(x * x + y * y + z * z));
+    }
     
     int x;
     int y;

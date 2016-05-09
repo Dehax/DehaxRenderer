@@ -8,7 +8,7 @@
 struct DEHAXGLSHARED_EXPORT Matrix
 {
 public:
-    explicit Matrix(int rows = 4, int cols = 4, bool identity = false);
+    explicit Matrix(bool identity = false);
 //    Matrix &operator=(const Matrix &a);
     
     static Matrix transform(const long double &x, const long double &y, const long double &z);
@@ -23,15 +23,26 @@ public:
     static Matrix scale(Vec3f &scale);
     static Matrix scale(Vec3f &scale, Vec3f &pivot);
     
-    std::vector<long double> &operator[](const int i);
+    //std::vector<long double> &operator[](const int i);
+    void set(const int &i, const int &j, const long double &value)
+    {
+        m[i][j] = value;
+    }
+
+    inline long double get(const int &i, const int &j)
+    {
+        return m[i][j];
+    }
+
     Matrix operator*(const Matrix &a);
     
-    int rows() const;
-    int cols() const;
+    
+//    int rows() const;
+//    int cols() const;
 private:
-    std::vector<std::vector<long double>> m;
-    int m_rows;
-    int m_cols;
+    long double m[4][4];
+//    int m_rows;
+//    int m_cols;
 };
 
 #endif // MATRIX_H

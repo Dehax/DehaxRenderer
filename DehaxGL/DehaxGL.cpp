@@ -6,7 +6,9 @@ DehaxGL::DehaxGL(IViewport *viewport)
 {
     m_scene = new Scene();
     m_camera = new Camera();
-    setViewportSize(m_viewport->getWidth(), m_viewport->getHeight());
+    m_width = m_viewport->getWidth();
+    m_height = m_viewport->getHeight();
+    setViewportSize(m_width, m_height);
 }
 
 DehaxGL::~DehaxGL()
@@ -33,10 +35,10 @@ void DehaxGL::render(const RenderModes &renderMode)
     
     int numObjects = m_scene->numObjects();
     
-    int width = m_viewport->getWidth();
-    int height = m_viewport->getHeight();
+    m_width = m_viewport->getWidth();
+    m_height = m_viewport->getHeight();
     
-    for (int i = 0; i < width * height; i++) {
+    for (int i = 0; i < m_width * m_height; i++) {
         m_zBuffer[i] = std::numeric_limits<int>::min();
     }
     
@@ -201,8 +203,6 @@ void DehaxGL::drawTriangle(Vec3i &t0, Vec3i &t1, Vec3i &t2, const ARGB &color, i
     }
     
     int total_height = t2.y - t0.y;
-    int width = m_viewport->getWidth();
-    int height = m_viewport->getHeight();
     const ARGB edgeColor = RGBA(255, 255, 255, 255);
     
     for (int i = 0; i < total_height; i++) {
@@ -248,9 +248,9 @@ void DehaxGL::drawTriangle(Vec3i &t0, Vec3i &t1, Vec3i &t2, const ARGB &color, i
                 long double phi = B.x == A.x ? 1.0L : (long double)(j - A.x) / (long double)(B.x - A.x);
                 Vec3i P = Vec3f(A) + Vec3f(B - A) * phi;
                 
-                int idx = P.x + P.y * width;
+                int idx = P.x + P.y * m_width;
                 
-                if (idx >= 0 && idx < width * height && zBuffer[idx] < P.z) {
+                if (idx >= 0 && idx < m_width * m_height && zBuffer[idx] < P.z) {
                     zBuffer[idx] = P.z;
                     m_viewport->setPixel(P.x, P.y, color);
                 }
@@ -261,12 +261,10 @@ void DehaxGL::drawTriangle(Vec3i &t0, Vec3i &t1, Vec3i &t2, const ARGB &color, i
 
 Vec3i DehaxGL::calculateScreenCoordinates(Vec3f &v)
 {
-    int width = m_viewport->getWidth();
-    int height = m_viewport->getHeight();
     int depth = std::numeric_limits<int>::max() / 2;//m_camera->farZ() - m_camera->nearZ();
     
-    int x = (v.x + 1.0L) * width / 2.0L;
-    int y = (v.y + 1.0L) * height / 2.0L;
+    int x = (v.x + 1.0L) * m_width / 2.0L;
+    int y = (v.y + 1.0L) * m_height / 2.0L;
     int z = (v.z + 1.0L) * -depth;
     
     return Vec3i(x, y, z);

@@ -231,19 +231,19 @@ Matrix Camera::viewMatrix() const
     
     Matrix viewMatrix;
     
-    viewMatrix[0][0] = xAxis.x;
-    viewMatrix[1][0] = xAxis.y;
-    viewMatrix[2][0] = xAxis.z;
-    viewMatrix[3][0] = -(xAxis * m_position);
-    viewMatrix[0][1] = yAxis.x;
-    viewMatrix[1][1] = yAxis.y;
-    viewMatrix[2][1] = yAxis.z;
-    viewMatrix[3][1] = -(yAxis * m_position);
-    viewMatrix[0][2] = zAxis.x;
-    viewMatrix[1][2] = zAxis.y;
-    viewMatrix[2][2] = zAxis.z;
-    viewMatrix[3][2] = -(zAxis * m_position);
-    viewMatrix[3][3] = 1.0L;
+    viewMatrix.set(0, 0, xAxis.x);
+    viewMatrix.set(1, 0, xAxis.y);
+    viewMatrix.set(2, 0, xAxis.z);
+    viewMatrix.set(3, 0, -(xAxis * m_position));
+    viewMatrix.set(0, 1, yAxis.x);
+    viewMatrix.set(1, 1, yAxis.y);
+    viewMatrix.set(2, 1, yAxis.z);
+    viewMatrix.set(3, 1, -(yAxis * m_position));
+    viewMatrix.set(0, 2, zAxis.x);
+    viewMatrix.set(1, 2, zAxis.y);
+    viewMatrix.set(2, 2, zAxis.z);
+    viewMatrix.set(3, 2, -(zAxis * m_position));
+    viewMatrix.set(3, 3, 1.0L);
     
     return viewMatrix;
 }
@@ -263,11 +263,11 @@ Matrix Camera::projectionMatrix() const
     switch (m_projection)
     {
     case Perspective:
-        projection[0][0] = xScale;
-        projection[1][1] = yScale;
-        projection[2][2] = zf / (zf - zn);
-        projection[3][2] = -zn * zf / (zf - zn);
-        projection[2][3] = 1.0L;
+        projection.set(0, 0, xScale);
+        projection.set(1, 1, yScale);
+        projection.set(2, 2, zf / (zf - zn));
+        projection.set(3, 2, -zn * zf / (zf - zn));
+        projection.set(2, 3, 1.0L);
 //        projection[0][0] = 1.0L;
 //        projection[1][1] = 1.0L;
 //        projection[2][2] = 1.0L;
@@ -282,11 +282,11 @@ Matrix Camera::projectionMatrix() const
             h = m_width * v / m_height;
         }
         
-        projection[0][0] = 2.0L / h;
-        projection[1][1] = 2.0L / v;
-        projection[2][2] = 1.0L / (zf - zn);
-        projection[3][2] = -zn / (zf - zn);
-        projection[3][3] = 1.0L;
+        projection.set(0, 0, 2.0L / h);
+        projection.set(1, 1, 2.0L / v);
+        projection.set(2, 2, 1.0L / (zf - zn));
+        projection.set(3, 2, -zn / (zf - zn));
+        projection.set(3, 3, 1.0L);
         break;
     }
     
