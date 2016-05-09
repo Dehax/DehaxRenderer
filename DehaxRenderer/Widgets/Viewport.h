@@ -13,10 +13,10 @@ class Viewport : public QWidget, public IViewport
 public:
     explicit Viewport(QWidget *parent = 0);
     
-    virtual void setPixel(const int &x, const int &y, const ARGB &color);
+    virtual void setPixel(const int &x, const int &y, const ARGB &color) final;
     //virtual void setLine(int x0, int y0, int x1, int y1, ARGB color);
-    virtual void setSize(const int &width, const int &height);
-    virtual void clear();
+    virtual void setSize(const int &width, const int &height) final;
+    virtual void clear() final;
     
     virtual int getWidth() const;
     virtual int getHeight() const;

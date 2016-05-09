@@ -11,6 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = DehaxRenderer
 TEMPLATE = app
 
+QMAKE_CXXFLAGS_DEBUG *= -pg
+QMAKE_LFLAGS_DEBUG *= -pg
 
 SOURCES += main.cpp\
         MainWindow.cpp \
@@ -27,8 +29,3 @@ else:unix: LIBS += -L$$OUT_PWD/../DehaxGL/ -lDehaxGL
 
 INCLUDEPATH += $$PWD/../DehaxGL
 DEPENDPATH += $$PWD/../DehaxGL
-
-#QMAKE_CXXFLAGS_DEBUG *= -pg
-#QMAKE_LFLAGS_DEBUG *= -pg
-
-#CONFIG += debug

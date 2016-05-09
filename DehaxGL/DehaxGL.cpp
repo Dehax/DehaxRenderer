@@ -2,7 +2,7 @@
 
 
 DehaxGL::DehaxGL(IViewport *viewport)
-    : m_viewport(viewport)
+    : m_viewport(viewport), m_zBuffer(nullptr)
 {
     m_scene = new Scene();
     m_camera = new Camera();

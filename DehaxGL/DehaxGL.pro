@@ -11,6 +11,9 @@ TEMPLATE = lib
 
 DEFINES += DEHAXGL_LIBRARY
 
+QMAKE_CXXFLAGS_DEBUG *= -pg
+QMAKE_LFLAGS_DEBUG *= -pg
+
 SOURCES += DehaxGL.cpp \
     Model/Vertex.cpp \
     Math/Vec3i.cpp \
@@ -46,8 +49,3 @@ unix {
     target.path = /usr/lib
     INSTALLS += target
 }
-
-#QMAKE_CXXFLAGS_DEBUG *= -pg
-#QMAKE_LFLAGS_DEBUG *= -pg
-
-#CONFIG += debug
