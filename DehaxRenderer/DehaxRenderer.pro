@@ -29,3 +29,6 @@ else:unix: LIBS += -L$$OUT_PWD/../DehaxGL/ -lDehaxGL
 
 INCLUDEPATH += $$PWD/../DehaxGL
 DEPENDPATH += $$PWD/../DehaxGL
+
+RESOURCES += \
+    DehaxRenderer.qrc

@@ -61,6 +61,12 @@
     <property name="title">
      <string>Файл</string>
     </property>
+    <addaction name="openSceneAction"/>
+    <addaction name="saveSceneAction"/>
+    <addaction name="separator"/>
+    <addaction name="importAction"/>
+    <addaction name="separator"/>
+    <addaction name="exitAction"/>
    </widget>
    <widget class="QMenu" name="helpMenu">
     <property name="title">
@@ -73,12 +79,21 @@
    <addaction name="helpMenu"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
+   <property name="iconSize">
+    <size>
+     <width>16</width>
+     <height>16</height>
+    </size>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="openSceneAction"/>
+   <addaction name="saveSceneAction"/>
+   <addaction name="turnOnParallelAction"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="parametersDockWidget">
@@ -99,7 +114,7 @@
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="objectsListTab">
         <attribute name="title">
@@ -119,8 +134,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>278</width>
-              <height>383</height>
+              <width>296</width>
+              <height>481</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -142,6 +157,9 @@
               <layout class="QHBoxLayout" name="cameraPositionLayout">
                <item>
                 <widget class="QDoubleSpinBox" name="cameraPositionX">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
                  <property name="buttonSymbols">
                   <enum>QAbstractSpinBox::UpDownArrows</enum>
                  </property>
@@ -152,36 +170,42 @@
                   <string>X: </string>
                  </property>
                  <property name="minimum">
-                  <double>-1000.000000000000000</double>
+                  <double>-10000.000000000000000</double>
                  </property>
                  <property name="maximum">
-                  <double>1000.000000000000000</double>
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="cameraPositionY">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
                  <property name="prefix">
                   <string>Y: </string>
                  </property>
                  <property name="minimum">
-                  <double>-1000.000000000000000</double>
+                  <double>-10000.000000000000000</double>
                  </property>
                  <property name="maximum">
-                  <double>1000.000000000000000</double>
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="cameraPositionZ">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
                  <property name="prefix">
                   <string>Z: </string>
                  </property>
                  <property name="minimum">
-                  <double>-1000.000000000000000</double>
+                  <double>-10000.000000000000000</double>
                  </property>
                  <property name="maximum">
-                  <double>1000.000000000000000</double>
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
@@ -198,6 +222,9 @@
               <layout class="QHBoxLayout" name="cameraLookAtLayout">
                <item>
                 <widget class="QDoubleSpinBox" name="cameraLookAtX">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
                  <property name="buttonSymbols">
                   <enum>QAbstractSpinBox::UpDownArrows</enum>
                  </property>
@@ -208,38 +235,163 @@
                   <string>X: </string>
                  </property>
                  <property name="minimum">
-                  <double>-1000.000000000000000</double>
+                  <double>-10000.000000000000000</double>
                  </property>
                  <property name="maximum">
-                  <double>1000.000000000000000</double>
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="cameraLookAtY">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
                  <property name="prefix">
                   <string>Y: </string>
                  </property>
                  <property name="minimum">
-                  <double>-1000.000000000000000</double>
+                  <double>-10000.000000000000000</double>
                  </property>
                  <property name="maximum">
-                  <double>1000.000000000000000</double>
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="cameraLookAtZ">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
                  <property name="prefix">
                   <string>Z: </string>
                  </property>
                  <property name="minimum">
-                  <double>-1000.000000000000000</double>
+                  <double>-10000.000000000000000</double>
                  </property>
                  <property name="maximum">
-                  <double>1000.000000000000000</double>
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,2">
+               <item>
+                <layout class="QVBoxLayout" name="cameraFovLayout">
+                 <item>
+                  <widget class="QLabel" name="fovLabel">
+                   <property name="text">
+                    <string>FOV:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QDoubleSpinBox" name="fov">
+                   <property name="suffix">
+                    <string>°</string>
+                   </property>
+                   <property name="decimals">
+                    <number>1</number>
+                   </property>
+                   <property name="minimum">
+                    <double>1.000000000000000</double>
+                   </property>
+                   <property name="maximum">
+                    <double>180.000000000000000</double>
+                   </property>
+                   <property name="value">
+                    <double>90.000000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QVBoxLayout" name="cameraViewDistanceLayout">
+                 <item>
+                  <widget class="QLabel" name="viewDistanceLabel">
+                   <property name="text">
+                    <string>Расстояние до экрана (d):</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QDoubleSpinBox" name="viewDistance">
+                   <property name="decimals">
+                    <number>1</number>
+                   </property>
+                   <property name="minimum">
+                    <double>0.000000000000000</double>
+                   </property>
+                   <property name="maximum">
+                    <double>10000.000000000000000</double>
+                   </property>
+                   <property name="value">
+                    <double>1.000000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="cameraZPlanesLayout" stretch="1,2">
+               <item>
+                <layout class="QVBoxLayout" name="cameraNearZLayout">
+                 <item>
+                  <widget class="QLabel" name="nearZLabel">
+                   <property name="text">
+                    <string>Ближняя Z:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QDoubleSpinBox" name="nearZ">
+                   <property name="decimals">
+                    <number>1</number>
+                   </property>
+                   <property name="minimum">
+                    <double>0.000000000000000</double>
+                   </property>
+                   <property name="maximum">
+                    <double>1000.000000000000000</double>
+                   </property>
+                   <property name="value">
+                    <double>1.000000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QVBoxLayout" name="cameraFarZLayout">
+                 <item>
+                  <widget class="QLabel" name="farZLabel">
+                   <property name="text">
+                    <string>Дальняя Z:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QDoubleSpinBox" name="farZ">
+                   <property name="decimals">
+                    <number>1</number>
+                   </property>
+                   <property name="minimum">
+                    <double>1.000000000000000</double>
+                   </property>
+                   <property name="maximum">
+                    <double>10000.000000000000000</double>
+                   </property>
+                   <property name="value">
+                    <double>1.000000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </item>
               </layout>
              </item>
@@ -284,6 +436,9 @@
               <layout class="QHBoxLayout" name="objectPositionLayout">
                <item>
                 <widget class="QDoubleSpinBox" name="objectPositionX">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
                  <property name="buttonSymbols">
                   <enum>QAbstractSpinBox::UpDownArrows</enum>
                  </property>
@@ -294,36 +449,42 @@
                   <string>X: </string>
                  </property>
                  <property name="minimum">
-                  <double>-1000.000000000000000</double>
+                  <double>-10000.000000000000000</double>
                  </property>
                  <property name="maximum">
-                  <double>1000.000000000000000</double>
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="objectPositionY">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
                  <property name="prefix">
                   <string>Y: </string>
                  </property>
                  <property name="minimum">
-                  <double>-1000.000000000000000</double>
+                  <double>-10000.000000000000000</double>
                  </property>
                  <property name="maximum">
-                  <double>1000.000000000000000</double>
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="objectPositionZ">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
                  <property name="prefix">
                   <string>Z: </string>
                  </property>
                  <property name="minimum">
-                  <double>-1000.000000000000000</double>
+                  <double>-10000.000000000000000</double>
                  </property>
                  <property name="maximum">
-                  <double>1000.000000000000000</double>
+                  <double>10000.000000000000000</double>
                  </property>
                 </widget>
                </item>
@@ -340,6 +501,9 @@
               <layout class="QHBoxLayout" name="objectRotationLayout">
                <item>
                 <widget class="QDoubleSpinBox" name="objectRotationX">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
                  <property name="buttonSymbols">
                   <enum>QAbstractSpinBox::UpDownArrows</enum>
                  </property>
@@ -348,6 +512,9 @@
                  </property>
                  <property name="prefix">
                   <string>X: </string>
+                 </property>
+                 <property name="suffix">
+                  <string>°</string>
                  </property>
                  <property name="minimum">
                   <double>0.000000000000000</double>
@@ -359,8 +526,14 @@
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="objectRotationY">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
                  <property name="prefix">
                   <string>Y: </string>
+                 </property>
+                 <property name="suffix">
+                  <string>°</string>
                  </property>
                  <property name="minimum">
                   <double>0.000000000000000</double>
@@ -372,8 +545,14 @@
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="objectRotationZ">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
                  <property name="prefix">
                   <string>Z: </string>
+                 </property>
+                 <property name="suffix">
+                  <string>°</string>
                  </property>
                  <property name="minimum">
                   <double>0.000000000000000</double>
@@ -396,6 +575,9 @@
               <layout class="QHBoxLayout" name="objectScaleLayout">
                <item>
                 <widget class="QDoubleSpinBox" name="objectScaleX">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
                  <property name="buttonSymbols">
                   <enum>QAbstractSpinBox::UpDownArrows</enum>
                  </property>
@@ -415,6 +597,9 @@
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="objectScaleY">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
                  <property name="prefix">
                   <string>Y: </string>
                  </property>
@@ -428,6 +613,9 @@
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="objectScaleZ">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
                  <property name="prefix">
                   <string>Z: </string>
                  </property>
@@ -461,21 +649,34 @@
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>-272</y>
-              <width>261</width>
-              <height>583</height>
+              <y>0</y>
+              <width>279</width>
+              <height>602</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_4">
              <item>
+              <widget class="QLabel" name="promptLabel">
+               <property name="text">
+                <string>Задайте параметры новой модели фотоаппарата:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QLabel" name="widthLabel">
                <property name="text">
-                <string>Толщина фотоаппарата</string>
+                <string>Толщина фотоаппарата (W)</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="width">
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="maximum">
+                <double>1000.000000000000000</double>
+               </property>
                <property name="value">
                 <double>40.000000000000000</double>
                </property>
@@ -484,14 +685,17 @@
              <item>
               <widget class="QLabel" name="lengthLabel">
                <property name="text">
-                <string>Длина фотоаппарата</string>
+                <string>Длина фотоаппарата (L)</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="length">
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
                <property name="maximum">
-                <double>200.000000000000000</double>
+                <double>1000.000000000000000</double>
                </property>
                <property name="value">
                 <double>140.000000000000000</double>
@@ -501,12 +705,18 @@
              <item>
               <widget class="QLabel" name="heightLabel">
                <property name="text">
-                <string>Высота фотоаппарата</string>
+                <string>Высота фотоаппарата (H)</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="height">
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="maximum">
+                <double>1000.000000000000000</double>
+               </property>
                <property name="value">
                 <double>70.000000000000000</double>
                </property>
@@ -515,12 +725,18 @@
              <item>
               <widget class="QLabel" name="radiusLabel">
                <property name="text">
-                <string>Радиус объектива</string>
+                <string>Радиус объектива (R)</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="radius">
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="maximum">
+                <double>1000.000000000000000</double>
+               </property>
                <property name="value">
                 <double>25.000000000000000</double>
                </property>
@@ -529,12 +745,18 @@
              <item>
               <widget class="QLabel" name="lensWidthLabel">
                <property name="text">
-                <string>Ширина объектива</string>
+                <string>Ширина объектива (WO)</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="lensWidth">
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="maximum">
+                <double>1000.000000000000000</double>
+               </property>
                <property name="value">
                 <double>30.000000000000000</double>
                </property>
@@ -543,12 +765,18 @@
              <item>
               <widget class="QLabel" name="lensMountLengthLabel">
                <property name="text">
-                <string>Длина крепления объектива</string>
+                <string>Длина крепления объектива (LF)</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="lensMountLength">
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="maximum">
+                <double>1000.000000000000000</double>
+               </property>
                <property name="value">
                 <double>50.000000000000000</double>
                </property>
@@ -557,12 +785,18 @@
              <item>
               <widget class="QLabel" name="lensMountWidthLabel">
                <property name="text">
-                <string>Ширина крепления объектива</string>
+                <string>Ширина крепления объектива (WF)</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="lensMountWidth">
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="maximum">
+                <double>1000.000000000000000</double>
+               </property>
                <property name="value">
                 <double>10.000000000000000</double>
                </property>
@@ -571,12 +805,18 @@
              <item>
               <widget class="QLabel" name="marginWidthLabel">
                <property name="text">
-                <string>Ширина свободной части</string>
+                <string>Ширина свободной части (LH)</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="marginWidth">
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="maximum">
+                <double>1000.000000000000000</double>
+               </property>
                <property name="value">
                 <double>40.000000000000000</double>
                </property>
@@ -585,12 +825,18 @@
              <item>
               <widget class="QLabel" name="sideButtonsHeightLabel">
                <property name="text">
-                <string>Высота боковых кнопок</string>
+                <string>Высота боковых кнопок (H1)</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="sideButtonsHeight">
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="maximum">
+                <double>1000.000000000000000</double>
+               </property>
                <property name="value">
                 <double>10.000000000000000</double>
                </property>
@@ -599,12 +845,18 @@
              <item>
               <widget class="QLabel" name="shutterButtonHeightLabel">
                <property name="text">
-                <string>Высота кнопки спуска затвора</string>
+                <string>Высота кнопки спуска затвора (H3)</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="shutterButtonHeight">
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="maximum">
+                <double>1000.000000000000000</double>
+               </property>
                <property name="value">
                 <double>15.000000000000000</double>
                </property>
@@ -613,12 +865,18 @@
              <item>
               <widget class="QLabel" name="sideButtonsRadiusLabel">
                <property name="text">
-                <string>Радиус боковых кнопок</string>
+                <string>Радиус боковых кнопок (R1)</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="sideButtonsRadius">
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="maximum">
+                <double>1000.000000000000000</double>
+               </property>
                <property name="value">
                 <double>15.000000000000000</double>
                </property>
@@ -627,12 +885,18 @@
              <item>
               <widget class="QLabel" name="shutterButtonRadiusLabel">
                <property name="text">
-                <string>Радиус кнопки спуска затвора</string>
+                <string>Радиус кнопки спуска затвора (R3)</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="shutterButtonRadius">
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="maximum">
+                <double>1000.000000000000000</double>
+               </property>
                <property name="value">
                 <double>5.000000000000000</double>
                </property>
@@ -642,6 +906,9 @@
               <layout class="QHBoxLayout" name="createChangeButtonsLayout">
                <item>
                 <widget class="QPushButton" name="createModelButton">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
                  <property name="text">
                   <string>Создать</string>
                  </property>
@@ -649,6 +916,9 @@
                </item>
                <item>
                 <widget class="QPushButton" name="editModelButton">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
                  <property name="text">
                   <string>Изменить</string>
                  </property>
@@ -677,6 +947,57 @@
     <string>О Qt...</string>
    </property>
   </action>
+  <action name="openSceneAction">
+   <property name="icon">
+    <iconset resource="DehaxRenderer.qrc">
+     <normaloff>:/images/images/open.png</normaloff>:/images/images/open.png</iconset>
+   </property>
+   <property name="text">
+    <string>Открыть...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="saveSceneAction">
+   <property name="icon">
+    <iconset resource="DehaxRenderer.qrc">
+     <normaloff>:/images/images/save.png</normaloff>:/images/images/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>Сохранить...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="turnOnParallelAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Параллельная</string>
+   </property>
+   <property name="toolTip">
+    <string>Включить параллельное проецирование</string>
+   </property>
+   <property name="shortcut">
+    <string>P</string>
+   </property>
+  </action>
+  <action name="importAction">
+   <property name="text">
+    <string>Импортировать...</string>
+   </property>
+  </action>
+  <action name="exitAction">
+   <property name="text">
+    <string>Выйти</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -690,6 +1011,8 @@
  <tabstops>
   <tabstop>tabWidget</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="DehaxRenderer.qrc"/>
+ </resources>
  <connections/>
 </ui>

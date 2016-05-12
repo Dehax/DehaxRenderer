@@ -32,6 +32,7 @@ Camera::Camera(const Vec3f &position, const Vec3f &lookAt, const Vec3f &up, long
 
 void Camera::rotate(const long double &angleX, const long double &angleY, const long double &angleZ)
 {
+    // TODO: Добавить поворот камеры по Z (UP-vector).
     Vec3f oldPosition = m_position - m_lookAt;
     
     long double r = oldPosition.length();
@@ -66,10 +67,8 @@ void Camera::zoom(const long double &multiplier)
         m_zoom /= zoom;
         break;
     case Perspective:
-        long double newFOV = m_fov - multiplier * degreeToRadian(5.0L);
-        if (newFOV <= degreeToRadian(120.0L) && newFOV >= degreeToRadian(30.0L)) {
-            m_fov = newFOV;
-        }
+        long double newFOV = m_fov - multiplier * degreeToRadian(1.0L);
+        setFOV(newFOV);
         break;
     }
 }
@@ -196,7 +195,9 @@ long double Camera::FOV() const
 
 void Camera::setFOV(const long double &FOV)
 {
-    m_fov = FOV;
+    if (FOV <= degreeToRadian(MAX_FOV) && FOV >= degreeToRadian(MIN_FOV)) {
+        m_fov = FOV;
+    }
 }
 
 long double Camera::nearZ()
@@ -263,15 +264,21 @@ Matrix Camera::projectionMatrix() const
     switch (m_projection)
     {
     case Perspective:
+//        projection.set(0, 0, xScale);
+//        projection.set(1, 1, yScale);
+//        projection.set(2, 2, zf / (zf - zn));
+//        projection.set(2, 3, 1.0L);
+//        projection.set(3, 2, -zn * zf / (zf - zn));
+        
+//        projection.set(0, 0, 1.0L);
+//        projection.set(1, 1, 1.0L);
+//        projection.set(2, 2, 1.0L);
+//        projection.set(2, 3, viewDistance());
         projection.set(0, 0, xScale);
         projection.set(1, 1, yScale);
-        projection.set(2, 2, zf / (zf - zn));
-        projection.set(3, 2, -zn * zf / (zf - zn));
+        projection.set(2, 2, (zf + zn) / (zf - zn));
         projection.set(2, 3, 1.0L);
-//        projection[0][0] = 1.0L;
-//        projection[1][1] = 1.0L;
-//        projection[2][2] = 1.0L;
-//        projection[2][3] = 1 / (m_width / 2 * std::tan(m_fov / 2.0L));
+        projection.set(3, 2, -2 * zf * zn / (zf - zn));
         break;
     case Parallel:
         if (m_width > m_height) {
@@ -282,8 +289,8 @@ Matrix Camera::projectionMatrix() const
             h = m_width * v / m_height;
         }
         
-        projection.set(0, 0, 2.0L / h);
-        projection.set(1, 1, 2.0L / v);
+        projection.set(0, 0, 1.0L / h);
+        projection.set(1, 1, 1.0L / v);
         projection.set(2, 2, 1.0L / (zf - zn));
         projection.set(3, 2, -zn / (zf - zn));
         projection.set(3, 3, 1.0L);

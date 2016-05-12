@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QResizeEvent>
 #include <QImage>
+#include "../DehaxGL/DehaxGL.h"
 #include "../DehaxGL/IViewport.h"
 
 class Viewport : public QWidget, public IViewport
@@ -45,22 +46,34 @@ public:
         m_fps = fps;
     }
     
+    void setRenderer(DehaxGL *dehaxGL);
+    
 signals:
     void sizeChanged(QSize newSize);
+    void cameraUpdated();
     
 public slots:
     
 protected:
-    virtual void paintEvent(QPaintEvent *event);
-    virtual void resizeEvent(QResizeEvent *event);
+    virtual void paintEvent(QPaintEvent *event) final;
+    virtual void resizeEvent(QResizeEvent *event) final;
+    virtual void mousePressEvent(QMouseEvent *event) final;
+    virtual void mouseMoveEvent(QMouseEvent *event) final;
+    virtual void mouseReleaseEvent(QMouseEvent *event) final;
     
 private:
     const QColor BACKGROUND_COLOR = QColor(127, 127, 127);
+    const long double MOUSE_CAMERA_MOVE_SCALE = 0.1L;
+    
+    DehaxGL *m_dehaxGL;
     
     QImage m_buffer;
     int m_width;
     int m_height;
     int m_fps;
+    
+    bool m_mousePressed;
+    QPoint m_mousePreviousPosition;
 };
 
 #endif // VIEWPORT_H

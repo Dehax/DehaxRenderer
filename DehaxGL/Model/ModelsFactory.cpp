@@ -1,4 +1,5 @@
 #include "ModelsFactory.h"
+//#include "Model.h"
 
 Model ModelsFactory::box(long double width, long double length, long double height)
 {
@@ -195,6 +196,7 @@ Model ModelsFactory::camera(long double width, long double length, long double h
 {
     Mesh *mesh = new Mesh();
     Model result = Model("Camera", mesh, RGBA(255, 0, 255, 255));
+    result.setParameters(width, length, height, radius, lensWidth, lensMountLength, lensMountWidth, marginWidth, sideButtonsHeight, shutterButtonHeight, sideButtonsRadius, shutterButtonRadius);
     
     Model base = ModelsFactory::box(width, length, height);
     

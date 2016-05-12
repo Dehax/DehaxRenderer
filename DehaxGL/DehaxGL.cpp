@@ -2,7 +2,7 @@
 
 
 DehaxGL::DehaxGL(IViewport *viewport)
-    : m_viewport(viewport), m_zBuffer(nullptr)
+    : m_viewport(viewport), m_zBuffer(nullptr), m_renderAxis(true)
 {
     m_scene = new Scene();
     m_camera = new Camera();
@@ -35,18 +35,22 @@ void DehaxGL::render(const RenderModes &renderMode)
     
     int numObjects = m_scene->numObjects();
     
-    m_width = m_viewport->getWidth();
-    m_height = m_viewport->getHeight();
-    
     for (int i = 0; i < m_width * m_height; i++) {
         m_zBuffer[i] = std::numeric_limits<int>::min();
     }
     
-    for (int i = 0; i < numObjects; i++) {
+    for (int i = (m_renderAxis ? 0 : 3); i < numObjects; i++) {
         Model &model = (*m_scene)[i];
         
         renderModel(model, renderMode);
     }
+}
+
+void DehaxGL::loadScene(const QString &sceneFilePath)
+{
+    delete m_scene;
+    
+    m_scene = new Scene(sceneFilePath);
 }
 
 void DehaxGL::setViewportSize(const int &width, const int &height)
@@ -54,12 +58,19 @@ void DehaxGL::setViewportSize(const int &width, const int &height)
     m_camera->setWidth(width);
     m_camera->setHeight(height);
     m_viewport->setSize(width, height);
+    m_width = width;
+    m_height = height;
     
     if (m_zBuffer != nullptr) {
         delete[] m_zBuffer;
     }
     
     m_zBuffer = new int[width * height];
+}
+
+void DehaxGL::toggleAxisRender()
+{
+    m_renderAxis = !m_renderAxis;
 }
 
 Camera &DehaxGL::camera() const
@@ -80,11 +91,61 @@ void DehaxGL::renderModel(Model &model, const RenderModes &renderMode)
     
     Mesh *mesh = model.mesh();
     int numFaces = mesh->numFaces();
-    
-    long double nearZ = m_camera->nearZ();
-    long double farZ = m_camera->farZ() + (m_camera->width() / 2) * std::tan(m_camera->FOV() / 2);
-    
     const ARGB modelColor = model.color();
+    
+    Camera::ProjectionType projection = m_camera->projection();
+    long double viewDistance = m_camera->viewDistance();
+    long double zoom = m_camera->getZoom();
+    long double fov = m_camera->FOV();
+    long double nearZ = m_camera->nearZ();
+    long double farZ = m_camera->farZ();
+    
+    long double objectRadius = mesh->maxLocalScale();
+    Vec3f objectPosition = model.position();
+    Vec3f objectPositionView = Vec3f(Vec4f(objectPosition) * viewMatrix);
+    long double objectNearZ = objectPositionView.z - objectRadius * model.scale().z;
+    long double objectFarZ = objectPositionView.z + objectRadius * model.scale().z;
+    long double objectLeftX = objectPositionView.x - objectRadius * model.scale().x;
+    long double objectRightX = objectPositionView.x + objectRadius * model.scale().x;
+    long double objectBottomY = objectPositionView.y - objectRadius * model.scale().y;
+    long double objectTopY = objectPositionView.y + objectRadius * model.scale().y;
+    
+    long double clipX;
+    long double clipY;
+    
+    if (objectNearZ <= nearZ || objectFarZ >= farZ) {
+        return;
+    }
+    
+    if (projection == Camera::Parallel) {
+        if (m_width > m_height) {
+            clipX = 0.5L * zoom;
+        } else {
+            clipX = m_width * 0.5L * zoom / m_height;
+        }
+    } else if (projection == Camera::Perspective) {
+        clipX = 0.5L * m_width * objectPositionView.z / viewDistance;
+        clipX = std::tan(fov / 2.0L) * (m_width / (long double)m_height) * objectPositionView.z;
+    }
+    
+    if (objectLeftX < -clipX || objectRightX > clipX) {
+        return;
+    }
+    
+    if (m_camera->projection() == Camera::Parallel) {
+        if (m_width > m_height) {
+            clipY = m_height * 0.5L * zoom / m_width;
+        } else {
+            clipY = 0.5L * zoom;
+        }
+    } else if (m_camera->projection() == Camera::Perspective) {
+        clipY = 0.5L * m_height * objectPositionView.z / viewDistance;
+        clipY = std::tan(fov / 2.0L) * objectPositionView.z;
+    }
+    
+    if (objectBottomY < -clipY || objectTopY > clipY) {
+        return;
+    }
     
     Face face;
     Vertex v1;
@@ -140,7 +201,7 @@ void DehaxGL::renderModel(Model &model, const RenderModes &renderMode)
         }
         ARGB faceColor = RGBA((int)(RED(modelColor) * intensity), (int)(GREEN(modelColor) * intensity), (int)(BLUE(modelColor) * intensity), 255);
         
-        lightDirection = (m_camera->projection() == Camera::Parallel ? m_camera->lookAt() : Vec3f(world1)) - m_camera->position();
+        lightDirection = (projection == Camera::Parallel ? m_camera->lookAt() : Vec3f(world1)) - m_camera->position();
         lightDirection = Vec3f::normal(lightDirection);
         intensity = -(n * lightDirection);
         // BUG: Нельзя делать проверку на Wireframe здесь, тогда отрисовываются backface.        
@@ -157,9 +218,9 @@ void DehaxGL::renderModel(Model &model, const RenderModes &renderMode)
         view2v3 = Vec3f(view2);
         view3v3 = Vec3f(view3);
         
-        if (view1v3.z <= nearZ || view1v3.z >= farZ || view2v3.z <= nearZ || view2v3.z >= farZ || view3v3.z <= nearZ || view3v3.z >= farZ) {
-            return;
-        }
+//        if (view1v3.z <= nearZ || view1v3.z >= farZ || view2v3.z <= nearZ || view2v3.z >= farZ || view3v3.z <= nearZ || view3v3.z >= farZ) {
+//            return;
+//        }
         
         // Координаты проекции
         result1 = view1 * projectionMatrix;
@@ -259,18 +320,18 @@ void DehaxGL::drawTriangle(Vec3i &t0, Vec3i &t1, Vec3i &t2, const ARGB &color, i
     }
 }
 
-Vec3i DehaxGL::calculateScreenCoordinates(Vec3f &v)
+Vec3i DehaxGL::calculateScreenCoordinates(const Vec3f &v)
 {
     int depth = std::numeric_limits<int>::max() / 2;//m_camera->farZ() - m_camera->nearZ();
     
-    int x = (v.x + 1.0L) * m_width / 2.0L;
-    int y = (v.y + 1.0L) * m_height / 2.0L;
+    int x = (v.x + 1.0L) * m_width * 0.5L;
+    int y = (v.y + 1.0L) * m_height * 0.5L;
     int z = (v.z + 1.0L) * -depth;
     
     return Vec3i(x, y, z);
 }
 
-Matrix DehaxGL::calculateVertexMatrix(Matrix &world) const
+Matrix DehaxGL::calculateVertexMatrix(const Matrix &world) const
 {
     return world * m_camera->viewMatrix() * m_camera->projectionMatrix();
 }

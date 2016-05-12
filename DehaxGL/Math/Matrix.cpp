@@ -140,7 +140,7 @@ Matrix Matrix::scale(Vec3f &scale, Vec3f &pivot)
 //    return m[i];
 //}
 
-Matrix Matrix::operator*(const Matrix &a)
+Matrix Matrix::operator*(const Matrix &a) const
 {
     Matrix result;//(/*m_rows, a.m_cols*/);
     long double sum;

@@ -5,6 +5,7 @@
 #include <cmath>
 #include <QString>
 #include <QStringBuilder>
+#include <QTextStream>
 //#include "Vec3i.h"
 //#include "Vec4f.h"
 
@@ -42,5 +43,8 @@ public:
     long double y;
     long double z;
 };
+
+QTextStream &operator<<(QTextStream &out, const Vec3f &v3f);
+QTextStream &operator>>(QTextStream &in, Vec3f &v3f);
 
 #endif // VEC3F_H

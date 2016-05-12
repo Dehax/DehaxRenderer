@@ -2,21 +2,15 @@
 
 Scene::Scene()
 {
-    Model axisX = Model(QString("X axis"), QString("../../models/axisX.obj"));
-    axisX.setColor(RGBA(255, 0, 0, 255));
-    axisX.setScale(Vec3f(100.0L));
-    Model axisY = Model(QString("Y axis"), QString("../../models/axisY.obj"));
-    axisY.setColor(RGBA(0, 255, 0, 255));
-    axisY.setScale(Vec3f(100.0L));
-    Model axisZ = Model(QString("Z axis"), QString("../../models/axisZ.obj"));
-    axisZ.setColor(RGBA(0, 0, 255, 255));
-    axisZ.setScale(Vec3f(100.0L));
-    
-    addModel(axisX);
-    addModel(axisY);
-    addModel(axisZ);
+    createAxisModels();
     
     std::srand(unsigned(std::time(0)));
+}
+
+Scene::Scene(const QString &sceneFilePath)
+    : Scene()
+{
+    loadSceneFile(sceneFilePath);
 }
 
 void Scene::moveObject(const int &index, const Vec3f &offset)
@@ -85,6 +79,33 @@ void Scene::addModel(const Model &model)
     m_objects.push_back(model);
 }
 
+void Scene::removeModel(const int &index)
+{
+    m_objects.erase(m_objects.begin() + index);
+}
+
+void Scene::exportToFile(const QString &sceneFilePath)
+{
+    QFile sceneFile(sceneFilePath);
+    
+    if (!sceneFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return;
+    }
+    
+    QTextStream stream(&sceneFile);
+    
+    // Write to stream.
+    int numberObjects = numObjects();
+    
+    stream << numberObjects - 3 << endl;
+    
+    for (int i = 3; i < numberObjects; i++) {
+        stream << m_objects[i];
+    }
+    
+    sceneFile.close();
+}
+
 int Scene::numObjects() const
 {
     return m_objects.size();
@@ -93,4 +114,58 @@ int Scene::numObjects() const
 Model &Scene::operator [](const int &i)
 {
     return m_objects[i];
+}
+
+void Scene::loadSceneFile(const QString &sceneFilePath)
+{
+    QFile sceneFile(sceneFilePath);
+    
+    if (!sceneFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return;
+    }
+    
+    QTextStream stream(&sceneFile);
+    QString line = stream.readLine();
+    
+    int numberObjects = line.toInt();
+    
+    for (int i = 0; i < numberObjects; i++) {
+        Model model;
+        stream >> model;
+        
+        addModel(model);
+    }
+    
+    sceneFile.close();
+}
+
+void Scene::createAxisModels()
+{
+//    Model axisX = Model(QString("X axis"), QString("../../models/axisX.obj"));
+//    axisX.setColor(RGBA(255, 0, 0, 255));
+//    axisX.setScale(Vec3f(100.0L));
+//    Model axisY = Model(QString("Y axis"), QString("../../models/axisY.obj"));
+//    axisY.setColor(RGBA(0, 255, 0, 255));
+//    axisY.setScale(Vec3f(100.0L));
+//    Model axisZ = Model(QString("Z axis"), QString("../../models/axisZ.obj"));
+//    axisZ.setColor(RGBA(0, 0, 255, 255));
+//    axisZ.setScale(Vec3f(100.0L));
+    
+//    addModel(axisX);
+//    addModel(axisY);
+//    addModel(axisZ);
+    
+    Model axisX = ModelsFactory::box(0.01L * AXIS_SCALE, 1.0L * AXIS_SCALE, 0.01L * AXIS_SCALE);
+    axisX.setPosition(Vec3f(0.5L * AXIS_SCALE, 0.0L, 0.0L));
+    axisX.setColor(RGBA(255, 0, 0, 255));
+    Model axisY = ModelsFactory::box(0.01L * AXIS_SCALE, 0.01L * AXIS_SCALE, 1.0L * AXIS_SCALE);
+    axisY.setPosition(Vec3f(0.0L, 0.5L * AXIS_SCALE, 0.0L));
+    axisY.setColor(RGBA(0, 255, 0, 255));
+    Model axisZ = ModelsFactory::box(1.0L * AXIS_SCALE, 0.01L * AXIS_SCALE, 0.01L * AXIS_SCALE);
+    axisZ.setPosition(Vec3f(0.0L, 0.0L, 0.5L * AXIS_SCALE));
+    axisZ.setColor(RGBA(0, 0, 255, 255));
+    
+    addModel(axisX);
+    addModel(axisY);
+    addModel(axisZ);
 }

@@ -45,15 +45,27 @@ public:
     long double farZ();
     void setFarZ(const long double &farZ);
     
+    inline long double viewDistance() const
+    {
+        return m_width / (2 * std::tan(m_fov / 2.0L));
+    }
+    
+    inline void setViewDistance(long double d)
+    {
+        m_fov = 2 * std::atan(0.5 * m_width / d);
+    }
+    
     Matrix viewMatrix() const;
     Matrix projectionMatrix() const;
     
 private:
     const ProjectionType DEFAULT_PROJECTION = Perspective;
-    const Vec3f DEFAULT_POSITION = Vec3f(0.0L, 0.0L, -100.0L);
+    const Vec3f DEFAULT_POSITION = Vec3f(0.0L, 0.0L, -200.0L);
     const Vec3f DEFAULT_LOOK_AT = Vec3f(0.0L, 0.0L, 0.0L);
     const Vec3f DEFAULT_UP = Vec3f(0.0L, 1.0L, 0.0L);
     const long double DEFAULT_FOV = M_PI_2;
+    const long double MIN_FOV = 20.0L;
+    const long double MAX_FOV = 150.0L;
     const int DEFAULT_PARALLEL_ZOOM = 500;
     const long double DEFAULT_NEAR_Z = 1.0L;
     const long double DEFAULT_FAR_Z = 500.0L;

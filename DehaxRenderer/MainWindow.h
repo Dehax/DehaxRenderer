@@ -7,6 +7,7 @@
 #include <QListWidgetItem>
 #include <QFlags>
 #include <QMessageBox>
+#include <QFileDialog>
 #include <chrono>
 #include "../DehaxGL/DehaxGL.h"
 #include "../DehaxGL/Model/Model.h"
@@ -37,16 +38,18 @@ private:
     void updateObjectInfo(int index);
     void updateCameraProperties();
     void modifyObject(int index, Qt::KeyboardModifiers modifiers, Vec3f transform, Vec3f rotation, Vec3f scale);
+    void deleteObject(const int &index);
+    void createCamera();
     
     Ui::MainWindow *ui;
+    QLabel *m_cameraInfo;
     
     DehaxGL *m_dgl;
     DehaxGL::RenderModes m_renderModes;
     int m_lastSelectedObjectIndex;
     
-    bool m_isFreeCameraMode;
-    
 private slots:
+    void viewportCameraUpdated();
     void viewportSizeChanged(QSize newSize);
     void objectSelected(QListWidgetItem *current, QListWidgetItem *previous);
     void on_aboutAction_triggered(bool checked);
@@ -67,6 +70,16 @@ private slots:
     void on_objectScaleY_valueChanged(double y);
     void on_objectScaleZ_valueChanged(double z);
     void on_createModelButton_clicked();
+    void on_fov_valueChanged(double fov);
+    void on_viewDistance_valueChanged(double d);
+    void on_editModelButton_clicked();
+    void on_nearZ_valueChanged(double nearZ);
+    void on_farZ_valueChanged(double farZ);
+    void on_openSceneAction_triggered();
+    void on_saveSceneAction_triggered();
+    void on_turnOnParallelAction_toggled(bool isOn);
+    void on_exitAction_triggered();
+    void on_importAction_triggered();
 };
 
 #endif // MAINWINDOW_H

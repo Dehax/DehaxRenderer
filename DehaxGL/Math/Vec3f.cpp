@@ -86,3 +86,23 @@ Vec3f::operator QString() const
 {
     return QString::number(x, 'f', 2) % ", " % QString::number(y, 'f', 2) % ", " % QString::number(z, 'f', 2);
 }
+
+QTextStream &operator<<(QTextStream &out, const Vec3f &v3f)
+{
+    char blank = ' ';
+    out << (double)v3f.x << blank << (double)v3f.y << blank << (double)v3f.z;
+    
+    return out;
+}
+
+QTextStream &operator>>(QTextStream &in, Vec3f &v3f)
+{
+    double x, y, z;
+    in >> x >> y >> z;
+    
+    v3f.x = x;
+    v3f.y = y;
+    v3f.z = z;
+    
+    return in;
+}

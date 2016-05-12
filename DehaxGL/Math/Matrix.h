@@ -34,7 +34,7 @@ public:
         return m[i][j];
     }
 
-    Matrix operator*(const Matrix &a);
+    Matrix operator*(const Matrix &a) const;
     
     
 //    int rows() const;

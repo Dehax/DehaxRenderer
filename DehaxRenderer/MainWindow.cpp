@@ -3,26 +3,30 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow), m_renderModes(DehaxGL::Both), m_lastSelectedObjectIndex(-1), m_isFreeCameraMode(false)
+    ui(new Ui::MainWindow), m_renderModes(DehaxGL::Both), m_lastSelectedObjectIndex(-1)
 {
     ui->setupUi(this);
+    m_cameraInfo = new QLabel("Hello");
+    ui->statusBar->addPermanentWidget(m_cameraInfo);
     connect(ui->viewport, SIGNAL(sizeChanged(QSize)), SLOT(viewportSizeChanged(QSize)));
+    connect(ui->viewport, SIGNAL(cameraUpdated()), SLOT(viewportCameraUpdated()));
     connect(ui->objectsListWidget, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), SLOT(objectSelected(QListWidgetItem*,QListWidgetItem*)));
-    
 //    ui->objectsListWidget->installEventFilter(this);
     
     m_dgl = new DehaxGL(ui->viewport);
+    ui->viewport->setRenderer(m_dgl);
     
-    Model teapotModel = Model("teapot", "../../models/teapot.obj");
-    Model boxModel = Model("box", "../../models/box.obj");
-    Model planeModel = Model("plane", "../../models/plane.obj");
-    Model suzanneModel = Model("suzanne", "../../models/suzanne.obj");
-    suzanneModel.setScale(Vec3f(100.0L));
-    Model generatedBox = ModelsFactory::box(1.0L, 1.0L, 1.5L);
-    Model generatedCylinder = ModelsFactory::cylinder(1.0L, 2.0L, 12);
-    Model camera = ModelsFactory::camera();
+//    Model teapotModel = Model("teapot", "../../models/teapot.obj");
+//    Model boxModel = Model("box", "../../models/box.obj");
+//    boxModel.setScale(Vec3f(10.0L));
+//    Model planeModel = Model("plane", "../../models/plane.obj");
+//    Model suzanneModel = Model("suzanne", "../../models/suzanne.obj");
+//    suzanneModel.setScale(Vec3f(10.0L));
+//    Model generatedBox = ModelsFactory::box(1.0L, 1.0L, 1.5L);
+//    Model generatedCylinder = ModelsFactory::cylinder(1.0L, 2.0L, 12);
+//    Model camera = ModelsFactory::camera();
     
-    m_dgl->scene().addModel(camera);
+    //m_dgl->scene().addModel(camera);
     
     //m_dgl->scene().generateCamera();
     
@@ -34,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //m_dgl->scene().addModel(planeModel);
     //m_dgl->camera().setPosition(Vec3f(10.0L, 0.0L, 0.0L));
     
+    updateCameraProperties();
     updateObjectsList();
     
     //ui->viewport->setFocus();
@@ -71,9 +76,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         m_dgl->camera().rotate(degreeToRadian(1.0L), 0.0L, 0.0L);
         updateCameraProperties();
         break;
-    case Qt::Key_P:
-        m_dgl->camera().changeProjection();
-        break;
+//    case Qt::Key_P:
+//        m_dgl->camera().changeProjection();
+//        break;
     case Qt::Key_W:
         modifyObject(m_lastSelectedObjectIndex, modifiers, Vec3f(0.0L, 1.0L, 0.0L), Vec3f(-degreeToRadian(1.0L), 0.0L, 0.0L), Vec3f(1.0L, 2.0L, 1.0L));
         break;
@@ -99,7 +104,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         m_renderModes ^= DehaxGL::Wireframe;
         break;
     case Qt::Key_F:
-        m_isFreeCameraMode = !m_isFreeCameraMode;
+        m_dgl->toggleAxisRender();
         break;
     case Qt::Key_I:
         //m_dgl->camera().move(Vec3f(0.0L, 1.0L, 0.0L));
@@ -131,10 +136,13 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         m_dgl->camera().strafeForward(1.0L);
         updateCameraProperties();
         break;
+    case Qt::Key_Delete:
+        deleteObject(m_lastSelectedObjectIndex);
+        updateObjectsList();
+        break;
     }
     
     updateViewport();
-    updateObjectsList();
 }
 
 void MainWindow::wheelEvent(QWheelEvent *event)
@@ -145,6 +153,7 @@ void MainWindow::wheelEvent(QWheelEvent *event)
     m_dgl->camera().zoom(zoomDelta);
     
     updateViewport();
+    updateCameraProperties();
 }
 
 //bool MainWindow::eventFilter(QObject *obj, QEvent *event)
@@ -191,7 +200,7 @@ void MainWindow::updateObjectsList()
     
     for (int i = 3; i < numObjects; i++) {
         Model &model = scene[i];
-        QString objectName = model.name() + " (" + model.position() + ")";
+        QString objectName = model.name();
         QListWidgetItem *objectItem = new QListWidgetItem(objectName);
         ui->objectsListWidget->addItem(objectItem);
     }
@@ -219,12 +228,23 @@ void MainWindow::updateCameraProperties()
 {
     Vec3f position = m_dgl->camera().position();
     Vec3f lookAt = m_dgl->camera().lookAt();
+    long double fov = radianToDegree(m_dgl->camera().FOV());
+    long double d = m_dgl->camera().viewDistance();
+    long double nearZ = m_dgl->camera().nearZ();
+    long double farZ = m_dgl->camera().farZ();
+    QString cameraInfo = QString(tr("Камера | (%1) FOV = %2°")).arg(position).arg((double)fov, 0, 'g', 2);
+    
+    ui->fov->setValue(fov);
+    ui->viewDistance->setValue(d);
+    ui->nearZ->setValue(nearZ);
+    ui->farZ->setValue(farZ);
     ui->cameraPositionX->setValue(position.x);
     ui->cameraPositionY->setValue(position.y);
     ui->cameraPositionZ->setValue(position.z);
     ui->cameraLookAtX->setValue(lookAt.x);
     ui->cameraLookAtY->setValue(lookAt.y);
     ui->cameraLookAtZ->setValue(lookAt.z);
+    m_cameraInfo->setText(cameraInfo);
 }
 
 void MainWindow::modifyObject(int index, Qt::KeyboardModifiers modifiers, Vec3f transform, Vec3f rotation, Vec3f scale)
@@ -244,10 +264,49 @@ void MainWindow::modifyObject(int index, Qt::KeyboardModifiers modifiers, Vec3f 
     updateObjectInfo(index);
 }
 
+void MainWindow::deleteObject(const int &index)
+{
+    if (index < 0) {
+        QMessageBox::warning(this, "Объект не выбран!", "Сначала выберите объект для удаления.");
+        return;
+    }
+    
+    m_dgl->scene().removeModel(index);
+    
+    updateViewport();
+    updateObjectsList();
+}
+
+void MainWindow::createCamera()
+{
+    long double w = ui->width->value();
+    long double l = ui->length->value();
+    long double h = ui->height->value();
+    long double r = ui->radius->value();
+    long double wo = ui->lensWidth->value();
+    long double lf = ui->lensMountLength->value();
+    long double wf = ui->lensMountWidth->value();
+    long double lh = ui->marginWidth->value();
+    long double h1 = ui->sideButtonsHeight->value();
+    long double h3 = ui->shutterButtonHeight->value();
+    long double r1 = ui->sideButtonsRadius->value();
+    long double r3 = ui->shutterButtonRadius->value();
+    
+    Model model = ModelsFactory::camera(w, l, h, r, wo, lf, wf, lh, h1, h3, r1, r3);
+    m_dgl->scene().addModel(model);
+}
+
+void MainWindow::viewportCameraUpdated()
+{
+    updateViewport();
+    updateCameraProperties();
+}
+
 void MainWindow::viewportSizeChanged(QSize newSize)
 {
     m_dgl->setViewportSize(newSize.width(), newSize.height());
     updateViewport();
+    updateCameraProperties();
 }
 
 void MainWindow::objectSelected(QListWidgetItem */*current*/, QListWidgetItem */*previous*/)
@@ -469,6 +528,108 @@ void MainWindow::on_objectScaleZ_valueChanged(double z)
 
 void MainWindow::on_createModelButton_clicked()
 {
-    // TODO: Сгенерировать модель фотоаппарата по параметрам.
-    //Model model = ModelsFactory::camera();
+    createCamera();
+    
+    updateViewport();
+    updateObjectsList();
+}
+
+void MainWindow::on_fov_valueChanged(double fov)
+{
+    m_dgl->camera().setFOV(degreeToRadian(fov));
+    
+    updateViewport();
+    updateCameraProperties();
+}
+
+void MainWindow::on_viewDistance_valueChanged(double d)
+{
+    m_dgl->camera().setViewDistance(d);
+    
+    updateViewport();
+    updateCameraProperties();
+}
+
+void MainWindow::on_editModelButton_clicked()
+{
+    if (m_lastSelectedObjectIndex < 0) {
+        QMessageBox::warning(this, "Объект не выбран!", "Выберите объект фотоаппарата для изменения параметров.");
+        return;
+    }
+    
+    m_dgl->scene().removeModel(m_lastSelectedObjectIndex);
+    
+    createCamera();
+    
+    updateViewport();
+    updateObjectsList();
+}
+
+void MainWindow::on_nearZ_valueChanged(double nearZ)
+{
+    m_dgl->camera().setNearZ(nearZ);
+    
+    updateViewport();
+    updateCameraProperties();
+}
+
+void MainWindow::on_farZ_valueChanged(double farZ)
+{
+    m_dgl->camera().setFarZ(farZ);
+    
+    updateViewport();
+    updateCameraProperties();
+}
+
+void MainWindow::on_openSceneAction_triggered()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, "Выберите файл сцены", QString(), "DehaxRenderer Scene (*.drs)");
+    
+    if (filePath == nullptr) {
+        return;
+    }
+    
+    m_dgl->loadScene(filePath);
+    
+    m_lastSelectedObjectIndex = -1;
+    updateViewport();
+    updateObjectsList();
+}
+
+void MainWindow::on_saveSceneAction_triggered()
+{
+    QString filePath = QFileDialog::getSaveFileName(this, "Укажите имя файла для сохранения сцены", QString(), "DehaxRenderer Scene (*.drs)");
+    
+    if (filePath == nullptr) {
+        return;
+    }
+    
+    m_dgl->scene().exportToFile(filePath);
+}
+
+void MainWindow::on_turnOnParallelAction_toggled(bool /*isOn*/)
+{
+    m_dgl->camera().changeProjection();
+    
+    updateViewport();
+}
+
+void MainWindow::on_exitAction_triggered()
+{
+    close();
+}
+
+void MainWindow::on_importAction_triggered()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, "Выберите файл модели", QString(), "Wavefront (*.obj)");
+    
+    if (filePath == nullptr) {
+        return;
+    }
+    
+    Model model = Model("Imported", filePath);
+    m_dgl->scene().addModel(model);
+    
+    updateViewport();
+    updateObjectsList();
 }

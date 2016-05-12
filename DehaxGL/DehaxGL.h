@@ -21,7 +21,10 @@ public:
     Q_DECLARE_FLAGS(RenderModes, RenderMode)
     void render(const DehaxGL::RenderModes &renderMode);
     
+    void loadScene(const QString &sceneFilePath);
+    
     void setViewportSize(const int &width, const int &height);
+    void toggleAxisRender();
     
     Camera &camera() const;
     Scene &scene() const;
@@ -31,8 +34,8 @@ private:
     void drawFace(Vec3f &v1, Vec3f &v2, Vec3f &v3, const ARGB &color, int *zBuffer, const DehaxGL::RenderModes &renderMode);
     void drawTriangle(Vec3i &t0, Vec3i &t1, Vec3i &t2, const ARGB &color, int *zBuffer, const DehaxGL::RenderModes &renderMode);
     //void drawLine(Vec3i from, Vec3i to, ARGB color, int *zBuffer);
-    Vec3i calculateScreenCoordinates(Vec3f &v);
-    Matrix calculateVertexMatrix(Matrix &world) const;
+    Vec3i calculateScreenCoordinates(const Vec3f &v);
+    Matrix calculateVertexMatrix(const Matrix &world) const;
     
     IViewport *m_viewport;
     Scene *m_scene;
@@ -40,6 +43,7 @@ private:
     int *m_zBuffer;
     int m_width;
     int m_height;
+    bool m_renderAxis;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(DehaxGL::RenderModes)
