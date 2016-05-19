@@ -117,28 +117,12 @@ void Model::setPivot(Vec3f pivot)
     m_pivot = pivot;
 }
 
-//Mesh *Model::mesh()
-//{
-//    return m_mesh;
-//}
-
-//Matrix Model::worldMatrix()
-//{
-//    Matrix P = m_pivotMatrix;
-//    Matrix R = m_rotateMatrix;
-//    Matrix S = m_scaleMatrix;
-//    Matrix PI = m_pivotInverseMatrix;
-//    Matrix T = m_transformMatrix;
-    
-//    return P * R * S * PI * T;
-//}
-
 QString Model::name() const
 {
     return m_name;
 }
 
-void Model::setName(QString &name)
+void Model::setName(const QString &name)
 {
     m_name = name;
 }
@@ -220,11 +204,13 @@ void Model::parseObjFile(const QString &filePath)
                 Vertex vertex(x, y, z);
                 m_mesh->addVertex(vertex);
             } else if (line.startsWith("f ", Qt::CaseInsensitive)) {
-                // FIXME: Краш при обработке файлов с нормалями и/или текстурными координатами.
                 QStringList faceData = line.split(' ', QString::SkipEmptyParts);
-                int v1 = faceData[1].toInt() - 1;
-                int v2 = faceData[2].toInt() - 1;
-                int v3 = faceData[3].toInt() - 1;
+                QStringList faceDataVertex = faceData[1].split('\\');
+                int v1 = faceDataVertex[0].toInt() - 1;
+                faceDataVertex = faceData[2].split('\\');
+                int v2 = faceDataVertex[0].toInt() - 1;
+                faceDataVertex = faceData[3].split('\\');
+                int v3 = faceDataVertex[0].toInt() - 1;
                 
                 Face face(v1, v2, v3);
                 m_mesh->addFace(face);
@@ -243,12 +229,14 @@ QTextStream &operator<<(QTextStream &out, const Model &model)
 {
     char blank = ' ';
     QString name = model.m_name;
+    ARGB color = model.color();
     Vec3f pivot = model.m_pivot;
     Vec3f position = model.m_position;
     Vec3f rotation = model.m_rotation;
     Vec3f scale = model.m_scale;
     
-    out << name << blank;
+    out << name << endl;
+    out << color << endl;
     
     for (int i = 0; i < Model::NUM_PARAMETERS - 1; i++) {
         out << (double)model.m_parameters[i] << blank;
@@ -267,10 +255,12 @@ QTextStream &operator<<(QTextStream &out, const Model &model)
 QTextStream &operator>>(QTextStream &in, Model &model)
 {
     QString name;
+    ARGB color;
     double parameters[Model::NUM_PARAMETERS];
     Vec3f pivot, position, rotation, scale;
     
-    in >> name;
+    name = in.readLine();
+    in >> color;
     
     for (int i = 0; i < Model::NUM_PARAMETERS; i++) {
         in >> parameters[i];
@@ -280,6 +270,7 @@ QTextStream &operator>>(QTextStream &in, Model &model)
     
     model = ModelsFactory::camera(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4], parameters[5], parameters[6], parameters[7], parameters[8], parameters[9], parameters[10], parameters[11]);
     model.setName(name);
+    model.setColor(color);
     model.setPivot(pivot);
     model.setPosition(position);
     model.setRotation(rotation);

@@ -6,8 +6,6 @@
 #include <QString>
 #include <QStringBuilder>
 #include <QTextStream>
-//#include "Vec3i.h"
-//#include "Vec4f.h"
 
 struct Vec4f;
 struct Vec3i;

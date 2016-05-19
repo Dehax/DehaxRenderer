@@ -11,37 +11,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->viewport, SIGNAL(sizeChanged(QSize)), SLOT(viewportSizeChanged(QSize)));
     connect(ui->viewport, SIGNAL(cameraUpdated()), SLOT(viewportCameraUpdated()));
     connect(ui->objectsListWidget, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), SLOT(objectSelected(QListWidgetItem*,QListWidgetItem*)));
-//    ui->objectsListWidget->installEventFilter(this);
     
     m_dgl = new DehaxGL(ui->viewport);
     ui->viewport->setRenderer(m_dgl);
     
-//    Model teapotModel = Model("teapot", "../../models/teapot.obj");
-//    Model boxModel = Model("box", "../../models/box.obj");
-//    boxModel.setScale(Vec3f(10.0L));
-//    Model planeModel = Model("plane", "../../models/plane.obj");
-//    Model suzanneModel = Model("suzanne", "../../models/suzanne.obj");
-//    suzanneModel.setScale(Vec3f(10.0L));
-//    Model generatedBox = ModelsFactory::box(1.0L, 1.0L, 1.5L);
-//    Model generatedCylinder = ModelsFactory::cylinder(1.0L, 2.0L, 12);
-//    Model camera = ModelsFactory::camera();
-    
-    //m_dgl->scene().addModel(camera);
-    
-    //m_dgl->scene().generateCamera();
-    
-    //m_dgl->scene().addModel(teapotModel);
-    //m_dgl->scene().addModel(boxModel);
-    //m_dgl->scene().addModel(suzanneModel);
-    //m_dgl->scene().addModel(generatedBox);
-    //m_dgl->scene().addModel(generatedCylinder);
-    //m_dgl->scene().addModel(planeModel);
-    //m_dgl->camera().setPosition(Vec3f(10.0L, 0.0L, 0.0L));
-    
+    setUiObjectColor(Qt::black);
     updateCameraProperties();
     updateObjectsList();
-    
-    //ui->viewport->setFocus();
 }
 
 MainWindow::~MainWindow()
@@ -76,9 +52,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         m_dgl->camera().rotate(degreeToRadian(1.0L), 0.0L, 0.0L);
         updateCameraProperties();
         break;
-//    case Qt::Key_P:
-//        m_dgl->camera().changeProjection();
-//        break;
     case Qt::Key_W:
         modifyObject(m_lastSelectedObjectIndex, modifiers, Vec3f(0.0L, 1.0L, 0.0L), Vec3f(-degreeToRadian(1.0L), 0.0L, 0.0L), Vec3f(1.0L, 2.0L, 1.0L));
         break;
@@ -86,10 +59,10 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         modifyObject(m_lastSelectedObjectIndex, modifiers, Vec3f(0.0L, -1.0L, 0.0L), Vec3f(degreeToRadian(1.0L), 0.0L, 0.0L), Vec3f(1.0L, 0.5L, 1.0L));
         break;
     case Qt::Key_D:
-        modifyObject(m_lastSelectedObjectIndex, modifiers, Vec3f(1.0L, 0.0L, 0.0L), Vec3f(0.0L, degreeToRadian(1.0L), 0.0L), Vec3f(2.0L, 1.0L, 1.0L));
+        modifyObject(m_lastSelectedObjectIndex, modifiers, Vec3f(1.0L, 0.0L, 0.0L), Vec3f(0.0L, -degreeToRadian(1.0L), 0.0L), Vec3f(2.0L, 1.0L, 1.0L));
         break;
     case Qt::Key_A:
-        modifyObject(m_lastSelectedObjectIndex, modifiers, Vec3f(-1.0L, 0.0L, 0.0L), Vec3f(0.0L, -degreeToRadian(1.0L), 0.0L), Vec3f(0.5L, 1.0L, 1.0L));
+        modifyObject(m_lastSelectedObjectIndex, modifiers, Vec3f(-1.0L, 0.0L, 0.0L), Vec3f(0.0L, degreeToRadian(1.0L), 0.0L), Vec3f(0.5L, 1.0L, 1.0L));
         break;
     case Qt::Key_E:
         modifyObject(m_lastSelectedObjectIndex, modifiers, Vec3f(0.0L, 0.0L, 1.0L), Vec3f(0.0L, 0.0L, degreeToRadian(1.0L)), Vec3f(1.0L, 1.0L, 2.0L));
@@ -107,32 +80,26 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         m_dgl->toggleAxisRender();
         break;
     case Qt::Key_I:
-        //m_dgl->camera().move(Vec3f(0.0L, 1.0L, 0.0L));
         m_dgl->camera().strafeUp(1.0L);
         updateCameraProperties();
         break;
     case Qt::Key_K:
-        //m_dgl->camera().move(Vec3f(0.0L, -1.0L, 0.0L));
         m_dgl->camera().strafeUp(-1.0L);
         updateCameraProperties();
         break;
     case Qt::Key_J:
-        //m_dgl->camera().move(Vec3f(-1.0L, 0.0L, 0.0L));
         m_dgl->camera().strafeRight(-1.0L);
         updateCameraProperties();
         break;
     case Qt::Key_L:
-        //m_dgl->camera().move(Vec3f(1.0L, 0.0L, 0.0L));
         m_dgl->camera().strafeRight(1.0L);
         updateCameraProperties();
         break;
     case Qt::Key_U:
-        //m_dgl->camera().move(Vec3f(0.0L, 0.0L, -1.0L));
         m_dgl->camera().strafeForward(-1.0L);
         updateCameraProperties();
         break;
     case Qt::Key_O:
-        //m_dgl->camera().move(Vec3f(0.0L, 0.0L, 1.0L));
         m_dgl->camera().strafeForward(1.0L);
         updateCameraProperties();
         break;
@@ -155,18 +122,6 @@ void MainWindow::wheelEvent(QWheelEvent *event)
     updateViewport();
     updateCameraProperties();
 }
-
-//bool MainWindow::eventFilter(QObject *obj, QEvent *event)
-//{
-//    if (obj != this && event->type() == QEvent::KeyPress) {
-////        return QMainWindow::eventFilter(obj, event);
-//        keyPressEvent(static_cast<QKeyEvent *>(event));
-        
-//        return true;
-//    }
-    
-//    return QMainWindow::eventFilter(obj, event);
-//}
 
 void MainWindow::updateViewport()
 {
@@ -279,6 +234,15 @@ void MainWindow::deleteObject(const int &index)
 
 void MainWindow::createCamera()
 {
+    QString objectName = ui->objectName->text();
+    
+    if (objectName.trimmed().isEmpty()) {
+        QMessageBox::critical(this, tr("Ошибка создания объекта"), tr("Имя объекта не может быть пустым либо содержать только пробельные символы"));
+        return;
+    }
+    
+    QColor objectColor = getUiObjectColor();
+    
     long double w = ui->width->value();
     long double l = ui->length->value();
     long double h = ui->height->value();
@@ -292,8 +256,26 @@ void MainWindow::createCamera()
     long double r1 = ui->sideButtonsRadius->value();
     long double r3 = ui->shutterButtonRadius->value();
     
-    Model model = ModelsFactory::camera(w, l, h, r, wo, lf, wf, lh, h1, h3, r1, r3);
-    m_dgl->scene().addModel(model);
+    try {
+        Model model = ModelsFactory::camera(w, l, h, r, wo, lf, wf, lh, h1, h3, r1, r3);
+        model.setName(objectName);
+        model.setColor(objectColor.rgba());
+        m_dgl->scene().addModel(model);
+    } catch (std::out_of_range &ex) {
+        QMessageBox::critical(this, tr("Ошибка создания объекта"), ex.what());
+    }
+}
+
+void MainWindow::setUiObjectColor(const QColor &color)
+{
+    QPalette palette = ui->pickColorButton->palette();
+    palette.setColor(QPalette::Button, color);
+    ui->pickColorButton->setPalette(palette);
+}
+
+QColor MainWindow::getUiObjectColor() const
+{
+    return ui->pickColorButton->palette().color(QPalette::Button);
 }
 
 void MainWindow::viewportCameraUpdated()
@@ -313,23 +295,11 @@ void MainWindow::objectSelected(QListWidgetItem */*current*/, QListWidgetItem */
 {
     int index = ui->objectsListWidget->currentRow();
     
-//    bool enabled = true;
-    
     if (index < 0 && ui->objectsListWidget->count() > 0) {
         return;
     }
     
     index += 3;
-    
-//    ui->objectPositionX->setEnabled(enabled);
-//    ui->objectPositionY->setEnabled(enabled);
-//    ui->objectPositionZ->setEnabled(enabled);
-//    ui->objectRotationX->setEnabled(enabled);
-//    ui->objectRotationY->setEnabled(enabled);
-//    ui->objectRotationZ->setEnabled(enabled);
-//    ui->objectScaleX->setEnabled(enabled);
-//    ui->objectScaleY->setEnabled(enabled);
-//    ui->objectScaleZ->setEnabled(enabled);
     
     m_lastSelectedObjectIndex = index;
     
@@ -632,4 +602,13 @@ void MainWindow::on_importAction_triggered()
     
     updateViewport();
     updateObjectsList();
+}
+
+void MainWindow::on_pickColorButton_clicked()
+{
+    QColor color = QColorDialog::getColor(Qt::white, this, tr("Выберите цвет объекта"));
+    
+    if (color.isValid()) {
+        setUiObjectColor(color);
+    }
 }

@@ -8,7 +8,6 @@
 #include <QTextStream>
 #include <QDebug>
 #include "Mesh.h"
-//#include "../Math/Vec3f.h"
 #include "../Math/Matrix.h"
 #include "../Utils/Utils.h"
 
@@ -46,7 +45,7 @@ public:
     }
 
     QString name() const;
-    void setName(QString &name);
+    void setName(const QString &name);
     inline ARGB color() const
     {
         return m_color;

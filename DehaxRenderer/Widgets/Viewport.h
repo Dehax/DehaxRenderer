@@ -23,7 +23,6 @@ public:
         }
     }
     
-    //virtual void setLine(int x0, int y0, int x1, int y1, ARGB color);
     virtual void setSize(const int &width, const int &height) final;
     
     inline virtual void clear() final

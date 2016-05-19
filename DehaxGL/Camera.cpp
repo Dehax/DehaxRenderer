@@ -30,7 +30,7 @@ Camera::Camera(const Vec3f &position, const Vec3f &lookAt, const Vec3f &up, long
     m_phi = 0.0L;
 }
 
-void Camera::rotate(const long double &angleX, const long double &angleY, const long double &angleZ)
+void Camera::rotate(const long double &angleX, const long double &angleY, const long double &/*angleZ*/)
 {
     // TODO: Добавить поворот камеры по Z (UP-vector).
     Vec3f oldPosition = m_position - m_lookAt;
@@ -264,16 +264,6 @@ Matrix Camera::projectionMatrix() const
     switch (m_projection)
     {
     case Perspective:
-//        projection.set(0, 0, xScale);
-//        projection.set(1, 1, yScale);
-//        projection.set(2, 2, zf / (zf - zn));
-//        projection.set(2, 3, 1.0L);
-//        projection.set(3, 2, -zn * zf / (zf - zn));
-        
-//        projection.set(0, 0, 1.0L);
-//        projection.set(1, 1, 1.0L);
-//        projection.set(2, 2, 1.0L);
-//        projection.set(2, 3, viewDistance());
         projection.set(0, 0, xScale);
         projection.set(1, 1, yScale);
         projection.set(2, 2, (zf + zn) / (zf - zn));

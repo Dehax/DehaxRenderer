@@ -2,6 +2,7 @@
 #define MODELSFACTORY_H
 
 #include "dehaxgl_global.h"
+#include <stdexcept>
 #include <QString>
 #include "Mesh.h"
 #include "Model.h"

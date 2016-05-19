@@ -1,8 +1,6 @@
 #include "Matrix.h"
 
-Matrix::Matrix(bool identity)/*
-    : m(std::vector<std::vector<long double>>(rows, std::vector<long double>(cols, 0.0L))),
-      m_rows(rows), m_cols(cols)*/
+Matrix::Matrix(bool identity)
 {
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
@@ -16,17 +14,6 @@ Matrix::Matrix(bool identity)/*
         }
     }
 }
-
-//Matrix &Matrix::operator=(const Matrix &a)
-//{
-//    if (this != &a) {
-//        m = a.m;
-//        m_rows = a.m_rows;
-//        m_cols = a.m_cols;
-//    }
-    
-//    return *this;
-//}
 
 Matrix Matrix::transform(const long double &x, const long double &y, const long double &z)
 {
@@ -82,8 +69,8 @@ Matrix Matrix::rotationZ(const long double &angle)
     long double sinAngle = std::sin(angle);
     
     result.m[0][0] = cosAngle;
-    result.m[1][0] = sinAngle;
-    result.m[0][1] = -sinAngle;
+    result.m[0][1] = sinAngle;
+    result.m[1][0] = -sinAngle;
     result.m[1][1] = cosAngle;
     
     return result;
@@ -125,21 +112,6 @@ Matrix Matrix::scale(Vec3f &scale, Vec3f &pivot)
     return transform(-pivot) * Matrix::scale(scale) * transform(pivot);
 }
 
-//void Matrix::set(const int &i, const int &j, const long double &value)
-//{
-//    m[i][j] = value;
-//}
-
-//long double Matrix::get(const int &i, const int &j)
-//{
-//    return m[i][j];
-//}
-
-//std::vector<long double> &Matrix::operator[](const int i)
-//{
-//    return m[i];
-//}
-
 Matrix Matrix::operator*(const Matrix &a) const
 {
     Matrix result;//(/*m_rows, a.m_cols*/);
@@ -159,13 +131,3 @@ Matrix Matrix::operator*(const Matrix &a) const
     
     return result;
 }
-
-//int Matrix::rows() const
-//{
-//    return m_rows;
-//}
-
-//int Matrix::cols() const
-//{
-//    return m_cols;
-//}

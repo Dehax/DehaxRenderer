@@ -4,8 +4,6 @@
 #include "dehaxgl_global.h"
 #include "Matrix.h"
 
-//struct Vec3f;
-
 struct DEHAXGLSHARED_EXPORT Vec4f
 {
 public:

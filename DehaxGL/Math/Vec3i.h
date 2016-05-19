@@ -5,8 +5,6 @@
 #include <cmath>
 #include "Vec3f.h"
 
-//struct Vec3f;
-
 struct DEHAXGLSHARED_EXPORT Vec3i
 {
 public:

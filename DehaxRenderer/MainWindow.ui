@@ -20,7 +20,7 @@
    <enum>Qt::StrongFocus</enum>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Dehax Renderer</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">
@@ -114,7 +114,7 @@
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="objectsListTab">
         <attribute name="title">
@@ -133,7 +133,7 @@
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>0</y>
+              <y>-184</y>
               <width>296</width>
               <height>481</height>
              </rect>
@@ -157,9 +157,6 @@
               <layout class="QHBoxLayout" name="cameraPositionLayout">
                <item>
                 <widget class="QDoubleSpinBox" name="cameraPositionX">
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
                  <property name="buttonSymbols">
                   <enum>QAbstractSpinBox::UpDownArrows</enum>
                  </property>
@@ -179,9 +176,6 @@
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="cameraPositionY">
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
                  <property name="prefix">
                   <string>Y: </string>
                  </property>
@@ -195,9 +189,6 @@
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="cameraPositionZ">
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
                  <property name="prefix">
                   <string>Z: </string>
                  </property>
@@ -222,9 +213,6 @@
               <layout class="QHBoxLayout" name="cameraLookAtLayout">
                <item>
                 <widget class="QDoubleSpinBox" name="cameraLookAtX">
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
                  <property name="buttonSymbols">
                   <enum>QAbstractSpinBox::UpDownArrows</enum>
                  </property>
@@ -244,9 +232,6 @@
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="cameraLookAtY">
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
                  <property name="prefix">
                   <string>Y: </string>
                  </property>
@@ -260,9 +245,6 @@
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="cameraLookAtZ">
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
                  <property name="prefix">
                   <string>Z: </string>
                  </property>
@@ -436,9 +418,6 @@
               <layout class="QHBoxLayout" name="objectPositionLayout">
                <item>
                 <widget class="QDoubleSpinBox" name="objectPositionX">
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
                  <property name="buttonSymbols">
                   <enum>QAbstractSpinBox::UpDownArrows</enum>
                  </property>
@@ -458,9 +437,6 @@
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="objectPositionY">
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
                  <property name="prefix">
                   <string>Y: </string>
                  </property>
@@ -474,9 +450,6 @@
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="objectPositionZ">
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
                  <property name="prefix">
                   <string>Z: </string>
                  </property>
@@ -501,9 +474,6 @@
               <layout class="QHBoxLayout" name="objectRotationLayout">
                <item>
                 <widget class="QDoubleSpinBox" name="objectRotationX">
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
                  <property name="buttonSymbols">
                   <enum>QAbstractSpinBox::UpDownArrows</enum>
                  </property>
@@ -526,9 +496,6 @@
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="objectRotationY">
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
                  <property name="prefix">
                   <string>Y: </string>
                  </property>
@@ -545,9 +512,6 @@
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="objectRotationZ">
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
                  <property name="prefix">
                   <string>Z: </string>
                  </property>
@@ -575,9 +539,6 @@
               <layout class="QHBoxLayout" name="objectScaleLayout">
                <item>
                 <widget class="QDoubleSpinBox" name="objectScaleX">
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
                  <property name="buttonSymbols">
                   <enum>QAbstractSpinBox::UpDownArrows</enum>
                  </property>
@@ -597,9 +558,6 @@
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="objectScaleY">
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
                  <property name="prefix">
                   <string>Y: </string>
                  </property>
@@ -613,9 +571,6 @@
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="objectScaleZ">
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
                  <property name="prefix">
                   <string>Z: </string>
                  </property>
@@ -637,7 +592,7 @@
        </widget>
        <widget class="QWidget" name="createObjectsTab">
         <attribute name="title">
-         <string>Создать</string>
+         <string>Фотоаппарат</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_6">
          <item>
@@ -651,14 +606,62 @@
               <x>0</x>
               <y>0</y>
               <width>279</width>
-              <height>602</height>
+              <height>654</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_4">
              <item>
+              <layout class="QHBoxLayout" name="objectMainPropertiesLayout" stretch="10,1">
+               <item>
+                <layout class="QVBoxLayout" name="objectNameLayout">
+                 <item>
+                  <widget class="QLabel" name="objectNameLabel">
+                   <property name="text">
+                    <string>Имя объекта</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="objectName"/>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QVBoxLayout" name="objectColorLayout">
+                 <item>
+                  <widget class="QLabel" name="objectColorLabel">
+                   <property name="text">
+                    <string>Цвет</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pickColorButton">
+                   <property name="maximumSize">
+                    <size>
+                     <width>23</width>
+                     <height>23</height>
+                    </size>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="flat">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+             <item>
               <widget class="QLabel" name="promptLabel">
                <property name="text">
-                <string>Задайте параметры новой модели фотоаппарата:</string>
+                <string>Задайте параметры модели фотоаппарата:</string>
                </property>
               </widget>
              </item>
@@ -671,9 +674,6 @@
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="width">
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
                <property name="maximum">
                 <double>1000.000000000000000</double>
                </property>
@@ -691,9 +691,6 @@
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="length">
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
                <property name="maximum">
                 <double>1000.000000000000000</double>
                </property>
@@ -711,9 +708,6 @@
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="height">
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
                <property name="maximum">
                 <double>1000.000000000000000</double>
                </property>
@@ -731,9 +725,6 @@
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="radius">
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
                <property name="maximum">
                 <double>1000.000000000000000</double>
                </property>
@@ -751,9 +742,6 @@
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="lensWidth">
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
                <property name="maximum">
                 <double>1000.000000000000000</double>
                </property>
@@ -771,9 +759,6 @@
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="lensMountLength">
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
                <property name="maximum">
                 <double>1000.000000000000000</double>
                </property>
@@ -791,9 +776,6 @@
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="lensMountWidth">
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
                <property name="maximum">
                 <double>1000.000000000000000</double>
                </property>
@@ -811,9 +793,6 @@
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="marginWidth">
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
                <property name="maximum">
                 <double>1000.000000000000000</double>
                </property>
@@ -831,9 +810,6 @@
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="sideButtonsHeight">
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
                <property name="maximum">
                 <double>1000.000000000000000</double>
                </property>
@@ -851,9 +827,6 @@
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="shutterButtonHeight">
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
                <property name="maximum">
                 <double>1000.000000000000000</double>
                </property>
@@ -871,9 +844,6 @@
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="sideButtonsRadius">
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
                <property name="maximum">
                 <double>1000.000000000000000</double>
                </property>
@@ -891,9 +861,6 @@
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="shutterButtonRadius">
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
                <property name="maximum">
                 <double>1000.000000000000000</double>
                </property>
@@ -906,9 +873,6 @@
               <layout class="QHBoxLayout" name="createChangeButtonsLayout">
                <item>
                 <widget class="QPushButton" name="createModelButton">
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
                  <property name="text">
                   <string>Создать</string>
                  </property>
@@ -916,9 +880,6 @@
                </item>
                <item>
                 <widget class="QPushButton" name="editModelButton">
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
                  <property name="text">
                   <string>Изменить</string>
                  </property>

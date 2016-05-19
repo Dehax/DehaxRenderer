@@ -92,6 +92,7 @@ void DehaxGL::renderModel(Model &model, const RenderModes &renderMode)
     Mesh *mesh = model.mesh();
     int numFaces = mesh->numFaces();
     const ARGB modelColor = model.color();
+    const ARGB edgeColor = RGBA(255, 255, 255, 255);
     
     Camera::ProjectionType projection = m_camera->projection();
     long double viewDistance = m_camera->viewDistance();
@@ -110,8 +111,8 @@ void DehaxGL::renderModel(Model &model, const RenderModes &renderMode)
     long double objectBottomY = objectPositionView.y - objectRadius * model.scale().y;
     long double objectTopY = objectPositionView.y + objectRadius * model.scale().y;
     
-    long double clipX;
-    long double clipY;
+    long double clipX = 0.0L;
+    long double clipY = 0.0L;
     
     if (objectNearZ <= nearZ || objectFarZ >= farZ) {
         return;
@@ -171,6 +172,7 @@ void DehaxGL::renderModel(Model &model, const RenderModes &renderMode)
     Vec3f hc3;
     Vec3f n;
     Vec3f lightDirection;
+    bool backfaceCulling;
     
     for (int j = 0; j < numFaces; j++) {
         face = mesh->getFace(j);
@@ -196,17 +198,21 @@ void DehaxGL::renderModel(Model &model, const RenderModes &renderMode)
         lightDirection = m_camera->lookAt() - m_camera->position();
         lightDirection = Vec3f::normal(lightDirection);
         long double intensity = -(n * lightDirection);
+        
         if (intensity < 0.0L) {
             intensity = 0.0L;
         }
+        
         ARGB faceColor = RGBA((int)(RED(modelColor) * intensity), (int)(GREEN(modelColor) * intensity), (int)(BLUE(modelColor) * intensity), 255);
         
         lightDirection = (projection == Camera::Parallel ? m_camera->lookAt() : Vec3f(world1)) - m_camera->position();
         lightDirection = Vec3f::normal(lightDirection);
         intensity = -(n * lightDirection);
-        // BUG: Нельзя делать проверку на Wireframe здесь, тогда отрисовываются backface.        
-        if (intensity <= 0.0L && !renderMode.testFlag(Wireframe)) {
-            continue;
+        
+        if (intensity <= 0.0L) {
+            backfaceCulling = true;
+        } else {
+            backfaceCulling = false;
         }
         
         // Координаты вида
@@ -218,10 +224,6 @@ void DehaxGL::renderModel(Model &model, const RenderModes &renderMode)
         view2v3 = Vec3f(view2);
         view3v3 = Vec3f(view3);
         
-//        if (view1v3.z <= nearZ || view1v3.z >= farZ || view2v3.z <= nearZ || view2v3.z >= farZ || view3v3.z <= nearZ || view3v3.z >= farZ) {
-//            return;
-//        }
-        
         // Координаты проекции
         result1 = view1 * projectionMatrix;
         result2 = view2 * projectionMatrix;
@@ -232,20 +234,28 @@ void DehaxGL::renderModel(Model &model, const RenderModes &renderMode)
         hc2 = Vec3f(result2);
         hc3 = Vec3f(result3);
         
-        drawFace(hc1, hc2, hc3, faceColor, m_zBuffer, renderMode);
+        drawFace(hc1, hc2, hc3, faceColor, edgeColor, m_zBuffer, renderMode, backfaceCulling);
     }
 }
 
-void DehaxGL::drawFace(Vec3f &v1, Vec3f &v2, Vec3f &v3, const ARGB &color, int *zBuffer, const RenderModes &renderMode)
+void DehaxGL::drawFace(Vec3f &v1, Vec3f &v2, Vec3f &v3, const ARGB &triangleColor, const ARGB &edgeColor, int *zBuffer, const RenderModes &renderMode, bool backfaceCulling)
 {
     Vec3i s1 = calculateScreenCoordinates(v1);
     Vec3i s2 = calculateScreenCoordinates(v2);
     Vec3i s3 = calculateScreenCoordinates(v3);
     
-    drawTriangle(s1, s2, s3, color, zBuffer, renderMode);
+    if (!backfaceCulling && renderMode.testFlag(DehaxGL::Solid)) {
+        drawTriangle(s1, s2, s3, triangleColor, zBuffer);
+    }
+    
+    if (renderMode.testFlag(DehaxGL::Wireframe)) {
+        drawLine(s1, s2, edgeColor);
+        drawLine(s2, s3, edgeColor);
+        drawLine(s3, s1, edgeColor);
+    }
 }
 
-void DehaxGL::drawTriangle(Vec3i &t0, Vec3i &t1, Vec3i &t2, const ARGB &color, int *zBuffer, const RenderModes &renderMode)
+void DehaxGL::drawTriangle(Vec3i &t0, Vec3i &t1, Vec3i &t2, const ARGB &color, int *zBuffer)
 {
     if (t0.y == t1.y && t0.y == t2.y) {
         return;
@@ -264,7 +274,6 @@ void DehaxGL::drawTriangle(Vec3i &t0, Vec3i &t1, Vec3i &t2, const ARGB &color, i
     }
     
     int total_height = t2.y - t0.y;
-    const ARGB edgeColor = RGBA(255, 255, 255, 255);
     
     for (int i = 0; i < total_height; i++) {
         bool second_half = i > t1.y - t0.y || t1.y == t0.y;
@@ -278,51 +287,65 @@ void DehaxGL::drawTriangle(Vec3i &t0, Vec3i &t1, Vec3i &t2, const ARGB &color, i
             std::swap(A, B);
         }
         
-        if (renderMode.testFlag(Both) || renderMode.testFlag(Wireframe)) {
-            // start
-            long double phi = B.x == A.x ? 1.0L : 0.0L;
+        for (int j = A.x; j <= B.x; j++) {
+            long double phi = B.x == A.x ? 1.0L : (long double)(j - A.x) / (long double)(B.x - A.x);
             Vec3i P = Vec3f(A) + Vec3f(B - A) * phi;
             
-            //int idx = P.x + P.y * width;
+            int idx = P.x + P.y * m_width;
             
-//            if (idx >= 0 && idx < width * height && zBuffer[idx] < P.z) {
-//                zBuffer[idx] = P.z;
-//                m_viewport->setPixel(P.x, P.y, edgeColor);
-//            }
-            m_viewport->setPixel(P.x, P.y, edgeColor);
-            
-            // end
-            phi = 1.0L;
-            P = Vec3f(A) + Vec3f(B - A) * phi;
-            
-            //int idx = P.x + P.y * width;
-            
-//            if (idx >= 0 && idx < width * height && zBuffer[idx] < P.z) {
-//                zBuffer[idx] = P.z;
-//                m_viewport->setPixel(P.x, P.y, edgeColor);
-//            }
-            m_viewport->setPixel(P.x, P.y, edgeColor);
+            if (idx >= 0 && idx < m_width * m_height && zBuffer[idx] < P.z) {
+                zBuffer[idx] = P.z;
+                m_viewport->setPixel(P.x, P.y, color);
+            }
+        }
+    }
+}
+
+void DehaxGL::drawLine(Vec3i &from, Vec3i &to, const ARGB &color)
+{
+    int x0 = from.x;
+    int y0 = from.y;
+    int x1 = to.x;
+    int y1 = to.y;
+    
+    bool steep = false;
+    
+    if (std::abs(x0 - x1) < std::abs(y0 - y1)) {
+        std::swap(x0, y0);
+        std::swap(x1, y1);
+        steep = true;
+    }
+    
+    if (x0 > x1) {
+        std::swap(x0, x1);
+        std::swap(y0, y1);
+    }
+    
+    int dx = x1 - x0;
+    int dy = y1 - y0;
+    int derror2 = std::abs(dy) * 2;
+    int error2 = 0;
+    int y = y0;
+    
+    for (int x = x0; x <= x1; x++) {
+        if (steep) {
+            m_viewport->setPixel(y, x, color);
+        } else {
+            m_viewport->setPixel(x, y, color);
         }
         
-        if (renderMode.testFlag(Both) || renderMode.testFlag(Solid)) {
-            for (int j = A.x; j <= B.x; j++) {
-                long double phi = B.x == A.x ? 1.0L : (long double)(j - A.x) / (long double)(B.x - A.x);
-                Vec3i P = Vec3f(A) + Vec3f(B - A) * phi;
-                
-                int idx = P.x + P.y * m_width;
-                
-                if (idx >= 0 && idx < m_width * m_height && zBuffer[idx] < P.z) {
-                    zBuffer[idx] = P.z;
-                    m_viewport->setPixel(P.x, P.y, color);
-                }
-            }
+        error2 += derror2;
+    
+        if (error2 > dx) {
+            y += (y1 > y0 ? 1 : -1);
+            error2 -= dx * 2;
         }
     }
 }
 
 Vec3i DehaxGL::calculateScreenCoordinates(const Vec3f &v)
 {
-    int depth = std::numeric_limits<int>::max() / 2;//m_camera->farZ() - m_camera->nearZ();
+    int depth = std::numeric_limits<int>::max() / 2;
     
     int x = (v.x + 1.0L) * m_width * 0.5L;
     int y = (v.y + 1.0L) * m_height * 0.5L;

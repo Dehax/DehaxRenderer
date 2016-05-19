@@ -1,5 +1,4 @@
 #include "ModelsFactory.h"
-//#include "Model.h"
 
 Model ModelsFactory::box(long double width, long double length, long double height)
 {
@@ -194,6 +193,54 @@ Model ModelsFactory::lensMount(long double width, long double frontLength, long 
 
 Model ModelsFactory::camera(long double width, long double length, long double height, long double radius, long double lensWidth, long double lensMountLength, long double lensMountWidth, long double marginWidth, long double sideButtonsHeight, long double shutterButtonHeight, long double sideButtonsRadius, long double shutterButtonRadius)
 {
+    if (width <= 0.0L || 3.0L * width >= length || 1.5L * width >= height) {
+        throw std::out_of_range("Ширина должна быть больше 0.0, меньше 1/3 длины и меньше 2/3 высоты!");
+    }
+    
+    if (length <= 0.0L) {
+        throw std::out_of_range("Длина должна быть больше 0.0!");
+    }
+    
+    if (height <= 0.0L || height >= length) {
+        throw std::out_of_range("Высота должна быть больше 0.0 и меньше длины!");
+    }
+    
+    if (radius <= 0.0L || radius > lensMountLength) {
+        throw std::out_of_range("Радиус объектива должен быть больше 0.0 и меньше либо равен длине крепления объектива!");
+    }
+    
+    if (lensWidth <= 0.0L) {
+        throw std::out_of_range("Ширина объектива должна быть больше 0.0!");
+    }
+    
+    if (lensMountLength <= 0.25L * length || lensMountLength >= 0.5L * length) {
+        throw std::out_of_range("Длина крепления объектива должна быть больше 1/4 и меньше 1/2 длины фотоаппарата!");
+    }
+    
+    if (lensMountWidth <= 0.0L || lensMountWidth >= width) {
+        throw std::out_of_range("Ширина крепления объектива должна быть больше 0.0 и меньше ширины фотоаппарата!");
+    }
+    
+    if (marginWidth <= 0.0L || 2.0L * marginWidth + lensMountLength >= length) {
+        throw std::out_of_range("Длина свободной части должна быть больше 0.0 и соответствовать длине крепления объектива!");
+    }
+    
+    if (sideButtonsHeight <= 0.0L) {
+        throw std::out_of_range("Высота боковых кнопок должна быть больше 0.0!");
+    }
+    
+    if (shutterButtonHeight <= 0.0L) {
+        throw std::out_of_range("Высота кнопки спуска затвора должна быть больше 0.0!");
+    }
+    
+    if (sideButtonsRadius <= 0.0L || sideButtonsRadius >= width) {
+        throw std::out_of_range("Радиус боковых кнопок должен быть больше 0.0 и меньше ширины фотоаппарата!");
+    }
+    
+    if (shutterButtonRadius <= 0.0L || 3.0L * shutterButtonRadius >= width) {
+        throw std::out_of_range("Радиус кнопки спуска затвора должен быть больше 0.0 и меньше 1/3 ширины фотоаппарата!");
+    }
+    
     Mesh *mesh = new Mesh();
     Model result = Model("Camera", mesh, RGBA(255, 0, 255, 255));
     result.setParameters(width, length, height, radius, lensWidth, lensMountLength, lensMountWidth, marginWidth, sideButtonsHeight, shutterButtonHeight, sideButtonsRadius, shutterButtonRadius);
@@ -220,7 +267,6 @@ Model ModelsFactory::camera(long double width, long double length, long double h
     verticesOffset += numVertices;
     
     Model lensMount = ModelsFactory::lensMount(lensMountWidth, lensMountLength, length - marginWidth * 2.0L, height);
-    //lensMount.setPosition(Vec3f(0.0L, 0.0L, -(width / 2.0L + lensMountWidth / 2.0L)));
     
     currentMesh = lensMount.mesh();
     numVertices = currentMesh->numVertices();
@@ -242,8 +288,6 @@ Model ModelsFactory::camera(long double width, long double length, long double h
     verticesOffset += numVertices;
     
     Model lens = ModelsFactory::cylinder(radius, lensWidth, 12);
-    //lens.setPosition(Vec3f(0.0L, 0.0L, -(width / 2.0L + lensMountWidth + lensWidth / 2.0L)));
-    //lens.setRotation(Vec3f(degreeToRadian(90.0L), 0.0L, 0.0L));
     
     currentMesh = lens.mesh();
     numVertices = currentMesh->numVertices();
@@ -268,7 +312,6 @@ Model ModelsFactory::camera(long double width, long double length, long double h
     verticesOffset += numVertices;
     
     Model rightSideButton = ModelsFactory::cylinder(sideButtonsRadius, sideButtonsHeight, 12);
-    //rightSideButton.setPosition(Vec3f(-length / 2.0L + marginWidth / 2.0L, height / 2.0L + sideButtonsHeight / 2.0L, 0.0L));
     
     currentMesh = rightSideButton.mesh();
     numVertices = currentMesh->numVertices();
@@ -290,7 +333,6 @@ Model ModelsFactory::camera(long double width, long double length, long double h
     verticesOffset += numVertices;
     
     Model leftSideButton = ModelsFactory::cylinder(sideButtonsRadius, sideButtonsHeight, 12);
-    //leftSideButton.setPosition(Vec3f(length / 2.0L - marginWidth / 2.0L, height / 2.0L + sideButtonsHeight / 2.0L, 0.0L));
     
     currentMesh = leftSideButton.mesh();
     numVertices = currentMesh->numVertices();
@@ -312,7 +354,6 @@ Model ModelsFactory::camera(long double width, long double length, long double h
     verticesOffset += numVertices;
     
     Model centerButton = ModelsFactory::cylinder(sideButtonsRadius, sideButtonsHeight / 2.0L, 12);
-    //centerButton.setPosition(Vec3f(0.0L, height / 2.0L + sideButtonsHeight / 4.0L, 0.0L));
     
     currentMesh = centerButton.mesh();
     numVertices = currentMesh->numVertices();
@@ -334,7 +375,6 @@ Model ModelsFactory::camera(long double width, long double length, long double h
     verticesOffset += numVertices;
     
     Model shutterButton = ModelsFactory::cylinder(shutterButtonRadius, shutterButtonHeight, 12);
-    //shutterButton.setPosition(Vec3f(-length / 4.0L + marginWidth / 4.0L, height / 2.0L + shutterButtonHeight / 2.0L, width / 4.0L));    
     
     currentMesh = shutterButton.mesh();
     numVertices = currentMesh->numVertices();

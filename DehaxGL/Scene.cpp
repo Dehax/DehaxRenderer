@@ -132,6 +132,7 @@ void Scene::loadSceneFile(const QString &sceneFilePath)
     for (int i = 0; i < numberObjects; i++) {
         Model model;
         stream >> model;
+        stream.readLine();
         
         addModel(model);
     }
@@ -141,20 +142,6 @@ void Scene::loadSceneFile(const QString &sceneFilePath)
 
 void Scene::createAxisModels()
 {
-//    Model axisX = Model(QString("X axis"), QString("../../models/axisX.obj"));
-//    axisX.setColor(RGBA(255, 0, 0, 255));
-//    axisX.setScale(Vec3f(100.0L));
-//    Model axisY = Model(QString("Y axis"), QString("../../models/axisY.obj"));
-//    axisY.setColor(RGBA(0, 255, 0, 255));
-//    axisY.setScale(Vec3f(100.0L));
-//    Model axisZ = Model(QString("Z axis"), QString("../../models/axisZ.obj"));
-//    axisZ.setColor(RGBA(0, 0, 255, 255));
-//    axisZ.setScale(Vec3f(100.0L));
-    
-//    addModel(axisX);
-//    addModel(axisY);
-//    addModel(axisZ);
-    
     Model axisX = ModelsFactory::box(0.01L * AXIS_SCALE, 1.0L * AXIS_SCALE, 0.01L * AXIS_SCALE);
     axisX.setPosition(Vec3f(0.5L * AXIS_SCALE, 0.0L, 0.0L));
     axisX.setColor(RGBA(255, 0, 0, 255));

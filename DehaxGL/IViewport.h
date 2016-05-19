@@ -13,7 +13,6 @@ public:
      * @param y Координата пикселя по вертикали.
      */
     virtual void setPixel(const int &x, const int &y, const ARGB &color) = 0;
-    //virtual void setLine(int x1, int y1, int x2, int y2, ARGB color) = 0;
     virtual void setSize(const int &width, const int &height) = 0;
     virtual void clear() = 0;
     

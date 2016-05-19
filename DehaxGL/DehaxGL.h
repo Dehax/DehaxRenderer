@@ -31,9 +31,9 @@ public:
     
 private:
     void renderModel(Model &model, const DehaxGL::RenderModes &renderMode);
-    void drawFace(Vec3f &v1, Vec3f &v2, Vec3f &v3, const ARGB &color, int *zBuffer, const DehaxGL::RenderModes &renderMode);
-    void drawTriangle(Vec3i &t0, Vec3i &t1, Vec3i &t2, const ARGB &color, int *zBuffer, const DehaxGL::RenderModes &renderMode);
-    //void drawLine(Vec3i from, Vec3i to, ARGB color, int *zBuffer);
+    void drawFace(Vec3f &v1, Vec3f &v2, Vec3f &v3, const ARGB &triangleColor, const ARGB &edgeColor, int *zBuffer, const RenderModes &renderMode, bool backfaceCulling);
+    void drawTriangle(Vec3i &t0, Vec3i &t1, Vec3i &t2, const ARGB &color, int *zBuffer);
+    void drawLine(Vec3i &from, Vec3i &to, const ARGB &color);
     Vec3i calculateScreenCoordinates(const Vec3f &v);
     Matrix calculateVertexMatrix(const Matrix &world) const;
     

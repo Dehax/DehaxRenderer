@@ -8,6 +8,7 @@
 #include <QFlags>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QColorDialog>
 #include <chrono>
 #include "../DehaxGL/DehaxGL.h"
 #include "../DehaxGL/Model/Model.h"
@@ -30,8 +31,6 @@ protected:
     virtual void keyPressEvent(QKeyEvent *event);
     virtual void wheelEvent(QWheelEvent *event);
     
-//    bool eventFilter(QObject *obj, QEvent *event);
-    
 private:
     void updateViewport();
     void updateObjectsList();
@@ -40,6 +39,8 @@ private:
     void modifyObject(int index, Qt::KeyboardModifiers modifiers, Vec3f transform, Vec3f rotation, Vec3f scale);
     void deleteObject(const int &index);
     void createCamera();
+    void setUiObjectColor(const QColor &color);
+    QColor getUiObjectColor() const;
     
     Ui::MainWindow *ui;
     QLabel *m_cameraInfo;
@@ -80,6 +81,7 @@ private slots:
     void on_turnOnParallelAction_toggled(bool isOn);
     void on_exitAction_triggered();
     void on_importAction_triggered();
+    void on_pickColorButton_clicked();
 };
 
 #endif // MAINWINDOW_H
